@@ -1,0 +1,32 @@
+# Development files
+.vscode/
+node_modules/
+dist/
+
+# Git
+.git/
+.gitignore
+
+# Test files
+test/
+*.test.js
+
+# Build artifacts
+.astro/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Only include what's needed for the CLI to work
+# Everything else defined in package.json "files" field

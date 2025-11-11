@@ -20,7 +20,7 @@ Sherp is a CLI tool that lets you create beautiful, interactive presentations us
 ### Installation
 
 ```bash
-npm install -g sherp
+npm install -g @skeptrune/sherp
 ```
 
 ### Create a new presentation
