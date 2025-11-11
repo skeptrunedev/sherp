@@ -1,0 +1,169 @@
+---
+title: "Marp on Astro Demo"
+description: "A demonstration of Marp-style presentations built with Astro, MDX, and Content Collections"
+author: "Your Name"
+theme: "default"
+paginate: true
+---
+
+# Marp on Astro
+
+**Markdown Presentations with Astro + MDX**
+
+A complete replication of Marp functionality using Astro's Content Collections API
+
+---
+
+## Features
+
+- Single file presentations (MDX)
+- Slide splitting with horizontal rules
+- Marp-style directives
+- Theme support
+- Navigation controls
+- Keyboard shortcuts
+
+---
+
+## Getting Started
+
+Create a new MDX file in `src/content/presentations/`:
+
+```mdx
+---
+title: "My Presentation"
+theme: "default"
+paginate: true
+---
+
+# Slide 1
+
+---
+
+# Slide 2
+```
+
+---
+
+## Directives
+
+You can control slide appearance using:
+
+- **Global directives** - In frontmatter
+- **Local directives** - HTML comments per slide
+- **Directive inheritance** - Slides inherit from previous
+- **Scoped directives** - Use underscore prefix
+
+---
+
+## Code Highlighting
+
+Here's some example code:
+
+```typescript
+interface Presentation {
+  title: string;
+  theme: string;
+  slides: Slide[];
+}
+
+function createPresentation(config: Presentation) {
+  return new MarpAstro(config);
+}
+```
+
+---
+
+## Lists and Formatting
+
+**Bold text** and *italic text* work perfectly.
+
+1. Ordered lists
+2. Are supported
+3. With proper styling
+
+Unordered lists also work:
+- With nesting
+- And indentation
+
+---
+
+## Blockquotes
+
+> "The best presentations are built with Markdown"
+>
+> *Every developer*
+
+> **Tip:** Use blockquotes for important callouts!
+
+---
+
+## Tables
+
+| Feature | Supported | Notes |
+|---------|-----------|-------|
+| Slides | Yes | Split by `---` |
+| Directives | Yes | Global and local |
+| Themes | Yes | Multiple built-in |
+| Navigation | Yes | Keyboard + mouse |
+
+---
+
+## Multiple Themes
+
+This implementation includes five themes:
+
+1. **default** - Clean, professional
+2. **gaia** - Purple gradient
+3. **uncover** - Bold blue
+4. **dark** - VS Code inspired
+5. **light** - Minimal
+
+---
+
+## Navigation Controls
+
+Try these keyboard shortcuts:
+
+- Arrow keys or Space - Next/Previous slide
+- Home - First slide
+- End - Last slide
+- O - Overview mode
+
+---
+
+## Overview Mode
+
+Press `O` to see all slides at once!
+
+Click any slide to jump to it.
+
+Perfect for:
+- Getting an overview
+- Quick navigation
+- Finding specific slides
+
+---
+
+# Thank You!
+
+## Questions?
+
+**Built with:**
+- Astro
+- MDX
+- Inspired by Marp
+
+---
+
+## Appendix: Technical Details
+
+This presentation system uses:
+
+1. **Astro Content Collections** for type-safe content
+2. **MDX** for rich markdown with components
+3. **Custom slide parser** to split on `---`
+4. **Directive parser** for Marp-style configuration
+5. **CSS theming** for multiple visual styles
+
+All in a single `.mdx` file!

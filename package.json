@@ -1,0 +1,20 @@
+{
+  "name": "sherp",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.10",
+    "astro": "^5.15.5",
+    "gray-matter": "^4.0.3",
+    "marked": "^17.0.0",
+    "mdast-util-to-string": "^4.0.0",
+    "unist-util-visit": "^5.0.0",
+    "yaml": "^2.8.1"
+  }
+}

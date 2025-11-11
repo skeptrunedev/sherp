@@ -1,0 +1,85 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PresentationLayout from '../../layouts/PresentationLayout.astro';
+import { parseSlides } from '../../lib/slideParser';
+import Slide from '../../components/Slide.astro';
+import PresentationViewer from '../../components/PresentationViewer.astro';
+import '../../styles/marp-themes.css';
+
+export async function getStaticPaths() {
+  const presentations = await getCollection('presentations');
+  return presentations.map((presentation) => ({
+    params: { slug: presentation.slug },
+    props: { presentation },
+  }));
+}
+
+interface Props {
+  presentation: CollectionEntry<'presentations'>;
+}
+
+const { presentation } = Astro.props;
+const { Content } = await presentation.render();
+
+// Get the raw markdown content
+const rawContent = presentation.body;
+
+// Parse slides
+const slides = parseSlides(rawContent);
+
+// Apply global directives
+const { paginate = false, theme = 'default' } = presentation.data;
+const slidesWithGlobalDirectives = slides.map(slide => ({
+  ...slide,
+  directives: {
+    paginate,
+    ...slide.directives,
+  }
+}));
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{presentation.data.title}</title>
+  {presentation.data.description && (
+    <meta name="description" content={presentation.data.description} />
+  )}
+  {presentation.data.author && (
+    <meta name="author" content={presentation.data.author} />
+  )}
+</head>
+<body>
+  <PresentationViewer title={presentation.data.title} theme={theme}>
+    {slidesWithGlobalDirectives.map((slide, index) => (
+      <Slide
+        directives={slide.directives}
+        slideNumber={index + 1}
+        totalSlides={slides.length}
+        theme={theme}
+      >
+        <div set:html={slide.content} />
+      </Slide>
+    ))}
+  </PresentationViewer>
+</body>
+</html>
+
+<style is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+</style>

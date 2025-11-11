@@ -1,0 +1,340 @@
+---
+interface Props {
+  title: string;
+  theme?: string;
+}
+
+const { title, theme = 'default' } = Astro.props;
+---
+
+<div class="presentation-outer" data-theme={theme}>
+  <div class="presentation-container">
+    <div class="slides-wrapper" id="slides-wrapper">
+      <slot />
+    </div>
+
+    <nav class="slide-navigation">
+      <button id="prev-slide" aria-label="Previous slide">←</button>
+      <span id="slide-counter"></span>
+      <button id="next-slide" aria-label="Next slide">→</button>
+    </nav>
+
+    <div class="presentation-controls">
+      <button id="fullscreen-btn" aria-label="Toggle fullscreen">⛶</button>
+      <button id="overview-btn" aria-label="Toggle overview">⊞</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .presentation-outer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .presentation-container {
+    position: relative;
+    width: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Scale down on portrait or narrow screens */
+  @media (max-aspect-ratio: 16/9) {
+    .presentation-container {
+      width: 100vw;
+      height: auto;
+    }
+  }
+
+  @media (min-aspect-ratio: 16/9) {
+    .presentation-container {
+      height: 100vh;
+      width: auto;
+    }
+  }
+
+  .slides-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slides-wrapper :global(.slide) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  }
+
+  .slides-wrapper :global(.slide.active) {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+
+  .slide-navigation {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 25px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .presentation-container:hover .slide-navigation {
+    opacity: 1;
+  }
+
+  .slide-navigation button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px 15px;
+    transition: transform 0.2s;
+  }
+
+  .slide-navigation button:hover {
+    transform: scale(1.2);
+  }
+
+  .slide-navigation button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  #slide-counter {
+    color: white;
+    font-size: 0.9rem;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .presentation-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .presentation-container:hover .presentation-controls {
+    opacity: 1;
+  }
+
+  .presentation-controls button {
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .presentation-controls button:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  /* Overview mode */
+  .presentation-outer.overview-mode {
+    align-items: stretch;
+  }
+
+  .presentation-outer.overview-mode .presentation-container {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  .presentation-outer.overview-mode .slides-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    overflow-y: auto;
+    background: #222;
+    position: static;
+  }
+
+  .presentation-outer.overview-mode :global(.slide) {
+    position: static !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto;
+    min-height: 200px;
+    aspect-ratio: 16 / 9;
+    cursor: pointer;
+    border: 2px solid #444;
+    transition: border-color 0.2s;
+  }
+
+  .presentation-outer.overview-mode :global(.slide:hover) {
+    border-color: #0288d1;
+  }
+</style>
+
+<script>
+  let currentSlide = 0;
+  let totalSlides = 0;
+  let overviewMode = false;
+
+  function initPresentation() {
+    const wrapper = document.getElementById('slides-wrapper');
+    const slides = wrapper?.querySelectorAll('.slide');
+
+    if (!slides) return;
+
+    totalSlides = slides.length;
+
+    // Set initial active slide
+    if (slides.length > 0) {
+      slides[0].classList.add('active');
+    }
+
+    updateNavigation();
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (overviewMode) return;
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case ' ':
+        case 'PageDown':
+          e.preventDefault();
+          nextSlide();
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+        case 'PageUp':
+          e.preventDefault();
+          prevSlide();
+          break;
+        case 'Home':
+          e.preventDefault();
+          goToSlide(0);
+          break;
+        case 'End':
+          e.preventDefault();
+          goToSlide(totalSlides - 1);
+          break;
+        case 'o':
+        case 'O':
+          e.preventDefault();
+          toggleOverview();
+          break;
+      }
+    });
+
+    // Button navigation
+    document.getElementById('prev-slide')?.addEventListener('click', prevSlide);
+    document.getElementById('next-slide')?.addEventListener('click', nextSlide);
+    document.getElementById('fullscreen-btn')?.addEventListener('click', toggleFullscreen);
+    document.getElementById('overview-btn')?.addEventListener('click', toggleOverview);
+
+    // Overview mode click
+    if (slides) {
+      slides.forEach((slide, index) => {
+        slide.addEventListener('click', () => {
+          if (overviewMode) {
+            goToSlide(index);
+            toggleOverview();
+          }
+        });
+      });
+    }
+  }
+
+  function updateNavigation() {
+    const counter = document.getElementById('slide-counter');
+    const prevBtn = document.getElementById('prev-slide') as HTMLButtonElement;
+    const nextBtn = document.getElementById('next-slide') as HTMLButtonElement;
+
+    if (counter) {
+      counter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+    }
+
+    if (prevBtn) {
+      prevBtn.disabled = currentSlide === 0;
+    }
+
+    if (nextBtn) {
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+    }
+  }
+
+  function goToSlide(index: number) {
+    const wrapper = document.getElementById('slides-wrapper');
+    const slides = wrapper?.querySelectorAll('.slide');
+    if (!slides) return;
+
+    const newSlide = Math.max(0, Math.min(index, totalSlides - 1));
+
+    // Remove active class from current slide
+    slides[currentSlide]?.classList.remove('active');
+
+    // Add active class to new slide
+    currentSlide = newSlide;
+    slides[currentSlide]?.classList.add('active');
+
+    updateNavigation();
+  }
+
+  function nextSlide() {
+    goToSlide(currentSlide + 1);
+  }
+
+  function prevSlide() {
+    goToSlide(currentSlide - 1);
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  function toggleOverview() {
+    overviewMode = !overviewMode;
+    const container = document.querySelector('.presentation-outer');
+    container?.classList.toggle('overview-mode');
+  }
+
+  // Initialize on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPresentation);
+  } else {
+    initPresentation();
+  }
+</script>

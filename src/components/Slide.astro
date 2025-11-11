@@ -1,0 +1,211 @@
+---
+import type { SlideDirectives } from '../lib/remarkSplitSlides';
+import { getSlideStyles, getEffectiveDirective } from '../lib/slideParser';
+
+interface Props {
+  directives: SlideDirectives;
+  slideNumber: number;
+  totalSlides: number;
+  theme?: string;
+}
+
+const { directives, slideNumber, totalSlides, theme = 'default' } = Astro.props;
+
+const slideStyles = getSlideStyles(directives);
+const showPaginate = getEffectiveDirective(directives, 'paginate');
+const header = getEffectiveDirective(directives, 'header');
+const footer = getEffectiveDirective(directives, 'footer');
+const className = getEffectiveDirective(directives, 'class');
+---
+
+<section
+  class:list={['slide', className]}
+  style={slideStyles}
+  data-slide={slideNumber}
+  data-theme={theme}
+>
+  {header && (
+    <header class="slide-header" set:html={header} />
+  )}
+
+  <div class="slide-content">
+    <slot />
+  </div>
+
+  {footer && (
+    <footer class="slide-footer" set:html={footer} />
+  )}
+
+  {showPaginate && (
+    <div class="slide-page-number">
+      {slideNumber} / {totalSlides}
+    </div>
+  )}
+</section>
+
+<style>
+  .slide {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: clamp(20px, 4vw, 70px);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  /* Use container-based font sizing */
+  @container (max-width: 800px) {
+    .slide {
+      font-size: clamp(0.8rem, 2vw, 1.5rem);
+    }
+  }
+
+  .slide-header {
+    position: absolute;
+    top: clamp(15px, 2vw, 30px);
+    left: clamp(20px, 4vw, 70px);
+    right: clamp(20px, 4vw, 70px);
+    font-size: 0.9em;
+    opacity: 0.7;
+  }
+
+  .slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+  }
+
+  /* Center content using margin auto - this way overflow is accessible */
+  .slide-content > :global(div) {
+    width: 100%;
+    margin: auto 0;
+    padding: clamp(10px, 2vw, 20px) 0;
+  }
+
+  .slide-footer {
+    position: absolute;
+    bottom: clamp(15px, 2vw, 30px);
+    left: clamp(20px, 4vw, 70px);
+    right: clamp(20px, 4vw, 70px);
+    font-size: 0.9em;
+    opacity: 0.7;
+  }
+
+  .slide-page-number {
+    position: absolute;
+    bottom: clamp(8px, 1.5vw, 15px);
+    right: clamp(8px, 1.5vw, 15px);
+    font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+    opacity: 0.5;
+    z-index: 10;
+  }
+
+  /* Default theme styles */
+  .slide[data-theme="default"] {
+    background: white;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    line-height: 1.6;
+  }
+
+  .slide[data-theme="default"] :global(h1) {
+    font-size: 2.5em;
+    margin: 0.3em 0 0.5em 0;
+    border-bottom: 2px solid #0288d1;
+    padding-bottom: 0.3em;
+  }
+
+  .slide[data-theme="default"] :global(h2) {
+    font-size: 2em;
+    margin: 0.3em 0 0.5em 0;
+    color: #0288d1;
+  }
+
+  .slide[data-theme="default"] :global(h3) {
+    font-size: 1.5em;
+    margin: 0.3em 0 0.5em 0;
+  }
+
+  /* Ensure first heading doesn't add top margin */
+  .slide[data-theme="default"] :global(h1:first-child),
+  .slide[data-theme="default"] :global(h2:first-child),
+  .slide[data-theme="default"] :global(h3:first-child) {
+    margin-top: 0;
+  }
+
+  .slide[data-theme="default"] :global(ul),
+  .slide[data-theme="default"] :global(ol) {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+
+  .slide[data-theme="default"] :global(li) {
+    margin: 0.3em 0;
+  }
+
+  .slide[data-theme="default"] :global(code) {
+    background: #f5f5f5;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.9em;
+  }
+
+  .slide[data-theme="default"] :global(pre) {
+    background: #f5f5f5;
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-size: 0.8em;
+  }
+
+  .slide[data-theme="default"] :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .slide[data-theme="default"] :global(blockquote) {
+    border-left: 4px solid #0288d1;
+    margin: 1em 0;
+    padding-left: 1em;
+    color: #666;
+  }
+
+  .slide[data-theme="default"] :global(a) {
+    color: #0288d1;
+    text-decoration: none;
+  }
+
+  .slide[data-theme="default"] :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .slide[data-theme="default"] :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .slide[data-theme="default"] :global(table) {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+
+  .slide[data-theme="default"] :global(th),
+  .slide[data-theme="default"] :global(td) {
+    border: 1px solid #ddd;
+    padding: 0.5em;
+    text-align: left;
+  }
+
+  .slide[data-theme="default"] :global(th) {
+    background: #f5f5f5;
+    font-weight: bold;
+  }
+</style>

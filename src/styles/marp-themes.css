@@ -1,0 +1,149 @@
+/* Marp Default Theme */
+.slide[data-theme="default"] {
+  background: white;
+  color: #24292e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+/* Marp Gaia Theme */
+.slide[data-theme="gaia"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-family: "Avenir Next", Avenir, "Century Gothic", sans-serif;
+}
+
+.slide[data-theme="gaia"] :global(h1) {
+  color: white;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.slide[data-theme="gaia"] :global(h2) {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.slide[data-theme="gaia"] :global(a) {
+  color: #ffd700;
+}
+
+.slide[data-theme="gaia"] :global(code) {
+  background: rgba(0, 0, 0, 0.2);
+  color: #ffd700;
+}
+
+.slide[data-theme="gaia"] :global(pre) {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.slide[data-theme="gaia"] :global(blockquote) {
+  border-left-color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Marp Uncover Theme */
+.slide[data-theme="uncover"] {
+  background: #283593;
+  color: white;
+  font-family: "Roboto", "Segoe UI", sans-serif;
+}
+
+.slide[data-theme="uncover"] :global(h1) {
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.slide[data-theme="uncover"] :global(h2) {
+  color: #90caf9;
+}
+
+.slide[data-theme="uncover"] :global(a) {
+  color: #90caf9;
+}
+
+.slide[data-theme="uncover"] :global(code) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffd54f;
+}
+
+.slide[data-theme="uncover"] :global(pre) {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.slide[data-theme="uncover"] :global(blockquote) {
+  border-left-color: #90caf9;
+}
+
+/* Dark Theme */
+.slide[data-theme="dark"] {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: "Consolas", "Courier New", monospace;
+}
+
+.slide[data-theme="dark"] :global(h1) {
+  color: #4ec9b0;
+  border-bottom: 2px solid #4ec9b0;
+}
+
+.slide[data-theme="dark"] :global(h2) {
+  color: #569cd6;
+}
+
+.slide[data-theme="dark"] :global(h3) {
+  color: #c586c0;
+}
+
+.slide[data-theme="dark"] :global(a) {
+  color: #3794ff;
+}
+
+.slide[data-theme="dark"] :global(code) {
+  background: #2d2d30;
+  color: #ce9178;
+}
+
+.slide[data-theme="dark"] :global(pre) {
+  background: #2d2d30;
+  border: 1px solid #3e3e42;
+}
+
+.slide[data-theme="dark"] :global(blockquote) {
+  border-left-color: #569cd6;
+  color: #9cdcfe;
+}
+
+/* Light Theme (minimal) */
+.slide[data-theme="light"] {
+  background: #fafafa;
+  color: #333;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.slide[data-theme="light"] :global(h1) {
+  color: #000;
+  font-weight: 800;
+}
+
+.slide[data-theme="light"] :global(h2) {
+  color: #333;
+  font-weight: 600;
+}
+
+.slide[data-theme="light"] :global(a) {
+  color: #0066cc;
+}
+
+.slide[data-theme="light"] :global(code) {
+  background: #e8e8e8;
+  color: #d73a49;
+}
+
+.slide[data-theme="light"] :global(pre) {
+  background: #e8e8e8;
+}
+
+.slide[data-theme="light"] :global(blockquote) {
+  border-left-color: #0066cc;
+}
