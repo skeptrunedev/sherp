@@ -3,6 +3,7 @@ import { tmpdir } from 'os';
 import { join, resolve, dirname } from 'path';
 import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,6 +37,21 @@ export async function setupWorkspace(userProjectDir) {
     if (existsSync(srcPath)) {
       await cp(srcPath, destPath);
     }
+  }
+
+  // Copy node_modules from sherp package to temp workspace
+  const nodeModulesPath = join(sherpRoot, 'node_modules');
+  const destNodeModules = join(tempDir, 'node_modules');
+
+  if (existsSync(nodeModulesPath)) {
+    await cp(nodeModulesPath, destNodeModules, { recursive: true });
+  } else {
+    // If node_modules doesn't exist in sherp root, install dependencies
+    console.log('Installing dependencies...');
+    execSync('npm install --prefer-offline --no-audit', {
+      cwd: tempDir,
+      stdio: 'inherit'
+    });
   }
 
   // Read user config
