@@ -1,6 +1,6 @@
 {
   "name": "@skeptrune/sherp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Marp-style presentations made simple with Markdown/MDX",
   "type": "module",
   "bin": {

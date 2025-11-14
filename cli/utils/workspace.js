@@ -107,6 +107,9 @@ export async function setupWorkspace(userProjectDir) {
     await updateDefaultTheme(tempDir, config);
   }
 
+  // Create root index that serves the first presentation
+  await createRootIndex(tempDir);
+
   return tempDir;
 }
 
@@ -149,4 +152,28 @@ async function updateDefaultTheme(workspaceDir, config) {
   );
 
   await writeFile(configPath, content);
+}
+
+async function createRootIndex(workspaceDir) {
+  const indexPath = join(workspaceDir, 'src', 'pages', 'index.astro');
+
+  // Create a simple index that redirects to the first presentation
+  const indexContent = `---
+import { getCollection } from 'astro:content';
+
+const presentations = await getCollection('presentations');
+
+// Get the first presentation or redirect to error if none exist
+if (presentations.length === 0) {
+  return Astro.redirect('/404');
+}
+
+const firstPresentation = presentations[0];
+
+// Redirect to the first presentation
+return Astro.redirect(\`/presentations/\${firstPresentation.slug}\`);
+---
+`;
+
+  await writeFile(indexPath, indexContent);
 }
