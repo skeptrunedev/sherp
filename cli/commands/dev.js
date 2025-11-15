@@ -1,77 +1,169 @@
 import { spawn } from 'child_process';
-import { resolve, dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
+import { readFile } from 'fs/promises';
 import chalk from 'chalk';
 import ora from 'ora';
 import { existsSync } from 'fs';
+import chokidar from 'chokidar';
 import { setupWorkspace } from '../utils/workspace.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { createStaticServer } from '../utils/server.js';
 
 export async function dev(options) {
   const spinner = ora('Starting development server').start();
 
-  try {
-    const cwd = process.cwd();
-    const configPath = join(cwd, 'sherp.config.json');
+  let serverInstance = null;
+  let watcher = null;
+  let workspaceDir = null;
+  let isRebuilding = false;
 
+  const cwd = process.cwd();
+  const configPath = join(cwd, 'sherp.config.json');
+
+  try {
     if (!existsSync(configPath)) {
       spinner.fail(chalk.red('No sherp.config.json found'));
       console.log(chalk.yellow('\nRun'), chalk.cyan('sherp init'), chalk.yellow('to create a new project'));
       process.exit(1);
     }
 
-    // Setup workspace (copy user files to temp Astro project)
-    const workspaceDir = await setupWorkspace(cwd);
+    // Read config to get presentation directory
+    const config = JSON.parse(await readFile(configPath, 'utf-8'));
+    const presentationsDir = join(cwd, config.presentations || './presentations');
 
-    spinner.text = 'Starting Astro dev server';
+    // Build function to be reused
+    async function buildPresentation() {
+      spinner.text = 'Building presentation';
+      spinner.start();
 
-    // Get the sherp package root (where the actual Astro project is)
-    const sherpRoot = resolve(__dirname, '../..');
+      try {
+        // Setup workspace (copy user files to temp Astro project)
+        workspaceDir = await setupWorkspace(cwd);
 
-    // Start Astro dev server
-    const astroProcess = spawn(
-      'npx',
-      [
-        'astro',
-        'dev',
-        '--host',
-        options.host,
-        '--port',
-        options.port
-      ],
-      {
-        cwd: workspaceDir,
-        stdio: 'inherit',
-        shell: true
+        // Build the Astro project to static files
+        await new Promise((resolve, reject) => {
+          const astroProcess = spawn(
+            'npx',
+            ['astro', 'build'],
+            {
+              cwd: workspaceDir,
+              stdio: 'pipe',
+              shell: true
+            }
+          );
+
+          astroProcess.on('error', reject);
+          astroProcess.on('exit', (code) => {
+            if (code === 0) resolve();
+            else reject(new Error(`Build failed with code ${code}`));
+          });
+        });
+
+        spinner.succeed(chalk.green('Build complete'));
+        return true;
+      } catch (error) {
+        spinner.fail(chalk.red('Build failed'));
+        console.error(error);
+        return false;
       }
-    );
+    }
 
-    spinner.succeed(chalk.green('Development server started'));
-    console.log(chalk.cyan(`\n  ➜ Local:   http://localhost:${options.port}/`));
-    console.log(chalk.cyan(`  ➜ Network: http://${options.host}:${options.port}/\n`));
+    // Initial build
+    await buildPresentation();
 
-    astroProcess.on('error', (error) => {
-      console.error(chalk.red('Failed to start dev server:'), error);
-      process.exit(1);
+    spinner.text = 'Starting static server';
+
+    // Serve the built files with our custom server (with live reload enabled)
+    const distPath = join(workspaceDir, 'dist');
+    serverInstance = await createStaticServer(distPath, {
+      host: options.host,
+      port: parseInt(options.port),
+      liveReload: true
     });
 
-    astroProcess.on('exit', (code) => {
-      if (code !== 0) {
-        process.exit(code);
+    spinner.succeed(chalk.green('Development server started'));
+    console.log(chalk.cyan(`\n  ➜ Local:   http://localhost:${serverInstance.port}/`));
+    console.log(chalk.cyan(`  ➜ Network: http://${options.host}:${serverInstance.port}/`));
+    console.log(chalk.gray('  ➜ Watching for changes...\n'));
+
+    // Watch for file changes in presentations directory
+    watcher = chokidar.watch(presentationsDir, {
+      ignored: /(^|[\/\\])\../, // ignore dotfiles
+      persistent: true,
+      ignoreInitial: true
+    });
+
+    watcher.on('change', async (path) => {
+      if (isRebuilding) return;
+
+      isRebuilding = true;
+      console.log(chalk.yellow(`\n  File changed: ${path}`));
+
+      const success = await buildPresentation();
+
+      if (success && serverInstance) {
+        serverInstance.reload();
+        console.log(chalk.green('  Page reloaded\n'));
       }
+
+      isRebuilding = false;
+    });
+
+    watcher.on('add', async (path) => {
+      if (isRebuilding) return;
+
+      isRebuilding = true;
+      console.log(chalk.yellow(`\n  File added: ${path}`));
+
+      const success = await buildPresentation();
+
+      if (success && serverInstance) {
+        serverInstance.reload();
+        console.log(chalk.green('  Page reloaded\n'));
+      }
+
+      isRebuilding = false;
+    });
+
+    watcher.on('unlink', async (path) => {
+      if (isRebuilding) return;
+
+      isRebuilding = true;
+      console.log(chalk.yellow(`\n  File removed: ${path}`));
+
+      const success = await buildPresentation();
+
+      if (success && serverInstance) {
+        serverInstance.reload();
+        console.log(chalk.green('  Page reloaded\n'));
+      }
+
+      isRebuilding = false;
     });
 
     // Handle Ctrl+C
-    process.on('SIGINT', () => {
-      astroProcess.kill('SIGINT');
+    process.on('SIGINT', async () => {
+      console.log(chalk.yellow('\n\nShutting down...'));
+      if (watcher) {
+        await watcher.close();
+      }
+      if (serverInstance) {
+        await serverInstance.close();
+      }
       process.exit(0);
     });
+
+    // Keep the process alive
+    await new Promise(() => {});
 
   } catch (error) {
     spinner.fail(chalk.red('Failed to start development server'));
     console.error(error);
+    if (watcher) {
+      await watcher.close();
+    }
+    if (serverInstance) {
+      await serverInstance.close();
+    }
     process.exit(1);
   }
 }
