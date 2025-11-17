@@ -15,7 +15,11 @@ export async function preview(options) {
 
     if (!existsSync(distPath)) {
       spinner.fail(chalk.red('No dist folder found'));
-      console.log(chalk.yellow('\nRun'), chalk.cyan('sherp build'), chalk.yellow('first'));
+      console.log(
+        chalk.yellow('\nRun'),
+        chalk.cyan('sherp build'),
+        chalk.yellow('first')
+      );
       process.exit(1);
     }
 
@@ -25,11 +29,13 @@ export async function preview(options) {
     serverInstance = await createStaticServer(distPath, {
       host: '0.0.0.0',
       port: parseInt(options.port),
-      liveReload: false
+      liveReload: false,
     });
 
     spinner.succeed(chalk.green('Preview server started'));
-    console.log(chalk.cyan(`\n  ➜ Preview: http://localhost:${serverInstance.port}/\n`));
+    console.log(
+      chalk.cyan(`\n  ➜ Preview: http://localhost:${serverInstance.port}/\n`)
+    );
 
     // Handle Ctrl+C
     process.on('SIGINT', async () => {
@@ -42,7 +48,6 @@ export async function preview(options) {
 
     // Keep the process alive
     await new Promise(() => {});
-
   } catch (error) {
     spinner.fail(chalk.red('Failed to start preview server'));
     console.error(error);

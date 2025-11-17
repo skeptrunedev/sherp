@@ -48,14 +48,15 @@ export function createStaticServer(distPath, options = {}) {
   const { host = '0.0.0.0', port = 4321, liveReload = false } = options;
   const clients = [];
 
-  const server = createServer(async (req, res) => {
+  // Request handler that will be reused
+  const requestHandler = async (req, res) => {
     try {
       // Live reload SSE endpoint
       if (liveReload && req.url === '/__sherp_live_reload') {
         res.writeHead(200, {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
         });
         res.write('retry: 1000\n\n');
 
@@ -117,7 +118,9 @@ export function createStaticServer(distPath, options = {}) {
       // Inject live reload script into HTML pages
       if (liveReload && ext === '.html') {
         const htmlContent = content.toString();
-        content = Buffer.from(htmlContent.replace('</body>', `${LIVE_RELOAD_SCRIPT}</body>`));
+        content = Buffer.from(
+          htmlContent.replace('</body>', `${LIVE_RELOAD_SCRIPT}</body>`)
+        );
       }
 
       res.writeHead(200, { 'Content-Type': mimeType });
@@ -127,37 +130,47 @@ export function createStaticServer(distPath, options = {}) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  });
+  };
 
   return new Promise((resolve, reject) => {
     const tryPort = (currentPort) => {
+      // Create a fresh server for this attempt
+      const server = createServer(requestHandler);
+
       server.listen(currentPort, host, () => {
+        // Successfully bound to this port
         resolve({
           server,
           url: `http://localhost:${currentPort}`,
           port: currentPort,
           reload: () => {
             // Notify all connected clients to reload
-            clients.forEach(client => {
+            clients.forEach((client) => {
               client.write('data: reload\n\n');
             });
           },
           close: () => {
             return new Promise((resolveClose) => {
               // Close all SSE connections
-              clients.forEach(client => client.end());
+              clients.forEach((client) => client.end());
               clients.length = 0;
               server.close(() => resolveClose());
             });
-          }
+          },
         });
       });
 
       server.on('error', (err) => {
         if (err.code === 'EADDRINUSE') {
-          console.log(chalk.yellow(`  Port ${currentPort} is in use, trying ${currentPort + 1}...`));
-          server.removeAllListeners('error');
-          tryPort(currentPort + 1);
+          console.log(
+            chalk.yellow(
+              `  Port ${currentPort} is in use, trying ${currentPort + 1}...`
+            )
+          );
+          // Close this failed server before trying the next port
+          server.close(() => {
+            tryPort(currentPort + 1);
+          });
         } else {
           reject(err);
         }

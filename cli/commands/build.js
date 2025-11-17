@@ -15,7 +15,11 @@ export async function build(options) {
 
     if (!existsSync(configPath)) {
       spinner.fail(chalk.red('No sherp.config.json found'));
-      console.log(chalk.yellow('\nRun'), chalk.cyan('sherp init'), chalk.yellow('to create a new project'));
+      console.log(
+        chalk.yellow('\nRun'),
+        chalk.cyan('sherp init'),
+        chalk.yellow('to create a new project')
+      );
       process.exit(1);
     }
 
@@ -26,15 +30,11 @@ export async function build(options) {
 
     // Run Astro build
     await new Promise((resolve, reject) => {
-      const astroProcess = spawn(
-        'npx',
-        ['astro', 'build'],
-        {
-          cwd: workspaceDir,
-          stdio: 'inherit',
-          shell: true
-        }
-      );
+      const astroProcess = spawn('npx', ['astro', 'build'], {
+        cwd: workspaceDir,
+        stdio: 'inherit',
+        shell: true,
+      });
 
       astroProcess.on('error', reject);
       astroProcess.on('exit', (code) => {
@@ -52,7 +52,6 @@ export async function build(options) {
 
     spinner.succeed(chalk.green('Build complete!'));
     console.log(chalk.cyan(`\n  Output: ${distDest}\n`));
-
   } catch (error) {
     spinner.fail(chalk.red('Build failed'));
     console.error(error);

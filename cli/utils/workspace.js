@@ -21,7 +21,12 @@ export async function setupWorkspace(userProjectDir) {
 
   // Copy core Sherp files (src, astro.config.mjs, etc.)
   const coreDirs = ['src', 'public'];
-  const coreFiles = ['astro.config.mjs', 'tsconfig.json', 'package.json', 'package-lock.json'];
+  const coreFiles = [
+    'astro.config.mjs',
+    'tsconfig.json',
+    'package.json',
+    'package-lock.json',
+  ];
 
   for (const dir of coreDirs) {
     const srcPath = join(sherpRoot, dir);
@@ -50,7 +55,7 @@ export async function setupWorkspace(userProjectDir) {
     console.log('Installing dependencies...');
     execSync('npm install --prefer-offline --no-audit', {
       cwd: tempDir,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
   }
 
@@ -59,7 +64,10 @@ export async function setupWorkspace(userProjectDir) {
   const config = JSON.parse(await readFile(configPath, 'utf-8'));
 
   // Copy user presentations
-  const presentationsDir = resolve(userProjectDir, config.presentations || './presentations');
+  const presentationsDir = resolve(
+    userProjectDir,
+    config.presentations || './presentations'
+  );
   const destPresentationsDir = join(tempDir, 'src', 'content', 'presentations');
 
   await mkdir(destPresentationsDir, { recursive: true });
@@ -107,37 +115,34 @@ export async function setupWorkspace(userProjectDir) {
     await updateDefaultTheme(tempDir, config);
   }
 
-  // Create root index that serves the first presentation
-  await createRootIndex(tempDir);
-
   return tempDir;
 }
 
 async function injectCustomStyles(workspaceDir) {
-  const layoutPath = join(workspaceDir, 'src', 'pages', 'presentations', '[...slug].astro');
-  let content = await readFile(layoutPath, 'utf-8');
+  const indexPath = join(workspaceDir, 'src', 'pages', 'index.astro');
+  let content = await readFile(indexPath, 'utf-8');
 
   // Add import for custom styles
   if (!content.includes('user-custom.css')) {
     content = content.replace(
-      "import '../../styles/marp-themes.css';",
-      "import '../../styles/marp-themes.css';\nimport '../../styles/user-custom.css';"
+      "import '../styles/marp-themes.css';",
+      "import '../styles/marp-themes.css';\nimport '../styles/user-custom.css';"
     );
-    await writeFile(layoutPath, content);
+    await writeFile(indexPath, content);
   }
 }
 
 async function injectCustomScript(workspaceDir) {
-  const layoutPath = join(workspaceDir, 'src', 'pages', 'presentations', '[...slug].astro');
-  let content = await readFile(layoutPath, 'utf-8');
+  const indexPath = join(workspaceDir, 'src', 'pages', 'index.astro');
+  let content = await readFile(indexPath, 'utf-8');
 
-  // Add script tag before </body>
+  // Add script tag before </body> with is:inline directive
   if (!content.includes('user-custom.js')) {
     content = content.replace(
       '</body>',
-      '  <script src="/user-custom.js"></script>\n</body>'
+      '  <script is:inline src="/user-custom.js"></script>\n</body>'
     );
-    await writeFile(layoutPath, content);
+    await writeFile(indexPath, content);
   }
 }
 
@@ -152,28 +157,4 @@ async function updateDefaultTheme(workspaceDir, config) {
   );
 
   await writeFile(configPath, content);
-}
-
-async function createRootIndex(workspaceDir) {
-  const indexPath = join(workspaceDir, 'src', 'pages', 'index.astro');
-
-  // Create a simple index that redirects to the first presentation
-  const indexContent = `---
-import { getCollection } from 'astro:content';
-
-const presentations = await getCollection('presentations');
-
-// Get the first presentation or redirect to error if none exist
-if (presentations.length === 0) {
-  return Astro.redirect('/404');
-}
-
-const firstPresentation = presentations[0];
-
-// Redirect to the first presentation
-return Astro.redirect(\`/presentations/\${firstPresentation.slug}\`);
----
-`;
-
-  await writeFile(indexPath, indexContent);
 }

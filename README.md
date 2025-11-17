@@ -53,9 +53,9 @@ Create MDX files in the `presentations/` folder:
 
 ```mdx
 ---
-title: "My Awesome Talk"
-author: "Your Name"
-theme: "default"
+title: 'My Awesome Talk'
+author: 'Your Name'
+theme: 'default'
 paginate: true
 ---
 
@@ -99,6 +99,7 @@ Edit `sherp.config.json` to customize your presentation:
 ## 🎨 Themes
 
 Built-in themes:
+
 - `default` - Clean and professional
 - `gaia` - Purple gradient
 - `uncover` - Bold blue
@@ -107,12 +108,12 @@ Built-in themes:
 
 ## 🎯 Commands
 
-| Command | Description |
-|---------|-------------|
+| Command             | Description                       |
+| ------------------- | --------------------------------- |
 | `sherp init <name>` | Create a new presentation project |
-| `sherp dev` | Start development server |
-| `sherp build` | Build for production |
-| `sherp preview` | Preview production build |
+| `sherp dev`         | Start development server          |
+| `sherp build`       | Build for production              |
+| `sherp preview`     | Preview production build          |
 
 ## ⌨️ Keyboard Shortcuts
 
@@ -132,7 +133,7 @@ Add custom CSS in `styles/custom.css`:
 }
 
 /* Custom background for slide 1 */
-.slide[data-slide="1"] {
+.slide[data-slide='1'] {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
@@ -177,6 +178,7 @@ sherp build
 ```
 
 Deploy the `dist/` folder to:
+
 - **Netlify** - Drag and drop
 - **Vercel** - `vercel --prod`
 - **GitHub Pages** - Push to `gh-pages` branch

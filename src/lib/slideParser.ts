@@ -1,13 +1,11 @@
 import { marked } from 'marked';
 import type { SlideDirectives } from './remarkSplitSlides';
 
-/**
- * Parses markdown content to split into slides and extract directives
- */
-export function parseSlides(content: string): Array<{ content: string; directives: SlideDirectives }> {
+export function parseSlides(
+  content: string
+): Array<{ content: string; directives: SlideDirectives }> {
   const slides: Array<{ content: string; directives: SlideDirectives }> = [];
 
-  // Split by --- (horizontal rules)
   const parts = content.split(/\n---\n/);
 
   let inheritedDirectives: SlideDirectives = {};
@@ -16,7 +14,6 @@ export function parseSlides(content: string): Array<{ content: string; directive
     const slideDirectives: SlideDirectives = { ...inheritedDirectives };
     let slideContent = part;
 
-    // Parse HTML comment directives
     const commentRegex = /<!--\s*([\s\S]*?)\s*-->/g;
     let match;
 
@@ -24,14 +21,11 @@ export function parseSlides(content: string): Array<{ content: string; directive
       const commentContent = match[1].trim();
       const directives = parseDirectiveComment(commentContent);
 
-      // Merge directives
       Object.assign(slideDirectives, directives);
 
-      // Remove the directive comment from content
       slideContent = slideContent.replace(match[0], '');
     }
 
-    // Update inherited directives (remove scoped ones starting with _)
     inheritedDirectives = { ...slideDirectives };
     for (const key of Object.keys(inheritedDirectives)) {
       if (key.startsWith('_')) {
@@ -39,8 +33,9 @@ export function parseSlides(content: string): Array<{ content: string; directive
       }
     }
 
-    // Convert markdown to HTML
-    const htmlContent = marked.parse(slideContent.trim(), { async: false }) as string;
+    const htmlContent = marked.parse(slideContent.trim(), {
+      async: false,
+    }) as string;
 
     slides.push({
       content: htmlContent,
@@ -61,13 +56,13 @@ function parseDirectiveComment(content: string): SlideDirectives {
       const [, key, value] = match;
       let parsedValue: string | boolean = value.trim();
 
-      // Remove quotes
-      if ((parsedValue.startsWith('"') && parsedValue.endsWith('"')) ||
-          (parsedValue.startsWith("'") && parsedValue.endsWith("'"))) {
+      if (
+        (parsedValue.startsWith('"') && parsedValue.endsWith('"')) ||
+        (parsedValue.startsWith("'") && parsedValue.endsWith("'"))
+      ) {
         parsedValue = parsedValue.slice(1, -1);
       }
 
-      // Parse booleans
       if (parsedValue === 'true') parsedValue = true;
       else if (parsedValue === 'false') parsedValue = false;
 
@@ -78,16 +73,11 @@ function parseDirectiveComment(content: string): SlideDirectives {
   return directives;
 }
 
-/**
- * Applies slide directives as inline styles
- */
 export function getSlideStyles(directives: SlideDirectives): string {
   const styles: string[] = [];
 
-  // Use scoped directive if available, otherwise use inherited
   const effectiveDirectives = { ...directives };
 
-  // Handle scoped directives (they override inherited)
   for (const [key, value] of Object.entries(directives)) {
     if (key.startsWith('_')) {
       const baseKey = key.slice(1) as keyof SlideDirectives;
@@ -104,7 +94,9 @@ export function getSlideStyles(directives: SlideDirectives): string {
   }
 
   if (effectiveDirectives.backgroundPosition) {
-    styles.push(`background-position: ${effectiveDirectives.backgroundPosition}`);
+    styles.push(
+      `background-position: ${effectiveDirectives.backgroundPosition}`
+    );
   }
 
   if (effectiveDirectives.backgroundRepeat) {
@@ -122,9 +114,6 @@ export function getSlideStyles(directives: SlideDirectives): string {
   return styles.join('; ');
 }
 
-/**
- * Gets effective directive value (scoped takes precedence over inherited)
- */
 export function getEffectiveDirective<K extends keyof SlideDirectives>(
   directives: SlideDirectives,
   key: K

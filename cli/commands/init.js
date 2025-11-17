@@ -10,7 +10,7 @@ const defaultConfig = {
   presentations: './presentations',
   customStyles: './styles/custom.css',
   customScripts: './scripts/custom.js',
-  components: './components'
+  components: './components',
 };
 
 const examplePresentation = `---
@@ -122,10 +122,7 @@ export async function init(options) {
     );
 
     // Write custom JS example
-    await writeFile(
-      join(projectPath, 'scripts', 'custom.js'),
-      customJsExample
-    );
+    await writeFile(join(projectPath, 'scripts', 'custom.js'), customJsExample);
 
     // Write README
     const readme = `# ${projectName}
@@ -165,8 +162,9 @@ Visit https://github.com/skeptrunedev/sherp for full documentation.
     console.log('\n' + chalk.bold('Next steps:'));
     console.log(chalk.cyan(`  cd ${projectName}`));
     console.log(chalk.cyan('  sherp dev'));
-    console.log('\n' + chalk.gray('Edit presentations/example.mdx to get started!'));
-
+    console.log(
+      '\n' + chalk.gray('Edit presentations/example.mdx to get started!')
+    );
   } catch (error) {
     spinner.fail(chalk.red('Failed to initialize project'));
     console.error(error);

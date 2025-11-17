@@ -22,13 +22,20 @@ export async function dev(options) {
   try {
     if (!existsSync(configPath)) {
       spinner.fail(chalk.red('No sherp.config.json found'));
-      console.log(chalk.yellow('\nRun'), chalk.cyan('sherp init'), chalk.yellow('to create a new project'));
+      console.log(
+        chalk.yellow('\nRun'),
+        chalk.cyan('sherp init'),
+        chalk.yellow('to create a new project')
+      );
       process.exit(1);
     }
 
     // Read config to get presentation directory
     const config = JSON.parse(await readFile(configPath, 'utf-8'));
-    const presentationsDir = join(cwd, config.presentations || './presentations');
+    const presentationsDir = join(
+      cwd,
+      config.presentations || './presentations'
+    );
 
     // Build function to be reused
     async function buildPresentation() {
@@ -41,15 +48,11 @@ export async function dev(options) {
 
         // Build the Astro project to static files
         await new Promise((resolve, reject) => {
-          const astroProcess = spawn(
-            'npx',
-            ['astro', 'build'],
-            {
-              cwd: workspaceDir,
-              stdio: 'pipe',
-              shell: true
-            }
-          );
+          const astroProcess = spawn('npx', ['astro', 'build'], {
+            cwd: workspaceDir,
+            stdio: 'pipe',
+            shell: true,
+          });
 
           astroProcess.on('error', reject);
           astroProcess.on('exit', (code) => {
@@ -77,19 +80,23 @@ export async function dev(options) {
     serverInstance = await createStaticServer(distPath, {
       host: options.host,
       port: parseInt(options.port),
-      liveReload: true
+      liveReload: true,
     });
 
     spinner.succeed(chalk.green('Development server started'));
-    console.log(chalk.cyan(`\n  ➜ Local:   http://localhost:${serverInstance.port}/`));
-    console.log(chalk.cyan(`  ➜ Network: http://${options.host}:${serverInstance.port}/`));
+    console.log(
+      chalk.cyan(`\n  ➜ Local:   http://localhost:${serverInstance.port}/`)
+    );
+    console.log(
+      chalk.cyan(`  ➜ Network: http://${options.host}:${serverInstance.port}/`)
+    );
     console.log(chalk.gray('  ➜ Watching for changes...\n'));
 
     // Watch for file changes in presentations directory
     watcher = chokidar.watch(presentationsDir, {
       ignored: /(^|[\/\\])\../, // ignore dotfiles
       persistent: true,
-      ignoreInitial: true
+      ignoreInitial: true,
     });
 
     watcher.on('change', async (path) => {
@@ -154,7 +161,6 @@ export async function dev(options) {
 
     // Keep the process alive
     await new Promise(() => {});
-
   } catch (error) {
     spinner.fail(chalk.red('Failed to start development server'));
     console.error(error);

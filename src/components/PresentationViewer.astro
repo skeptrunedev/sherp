@@ -45,7 +45,6 @@ const { title, theme = 'default' } = Astro.props;
     aspect-ratio: 16 / 9;
   }
 
-  /* Scale down on portrait or narrow screens */
   @media (max-aspect-ratio: 16/9) {
     .presentation-container {
       width: 100vw;
@@ -75,7 +74,9 @@ const { title, theme = 'default' } = Astro.props;
     height: 100%;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    transition:
+      opacity 0.3s ease-in-out,
+      visibility 0.3s ease-in-out;
   }
 
   .slides-wrapper :global(.slide.active) {
@@ -161,7 +162,6 @@ const { title, theme = 'default' } = Astro.props;
     background: rgba(0, 0, 0, 0.9);
   }
 
-  /* Overview mode */
   .presentation-outer.overview-mode {
     align-items: stretch;
   }
@@ -214,14 +214,12 @@ const { title, theme = 'default' } = Astro.props;
 
     totalSlides = slides.length;
 
-    // Set initial active slide
     if (slides.length > 0) {
       slides[0].classList.add('active');
     }
 
     updateNavigation();
 
-    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (overviewMode) return;
 
@@ -255,13 +253,15 @@ const { title, theme = 'default' } = Astro.props;
       }
     });
 
-    // Button navigation
     document.getElementById('prev-slide')?.addEventListener('click', prevSlide);
     document.getElementById('next-slide')?.addEventListener('click', nextSlide);
-    document.getElementById('fullscreen-btn')?.addEventListener('click', toggleFullscreen);
-    document.getElementById('overview-btn')?.addEventListener('click', toggleOverview);
+    document
+      .getElementById('fullscreen-btn')
+      ?.addEventListener('click', toggleFullscreen);
+    document
+      .getElementById('overview-btn')
+      ?.addEventListener('click', toggleOverview);
 
-    // Overview mode click
     if (slides) {
       slides.forEach((slide, index) => {
         slide.addEventListener('click', () => {
@@ -299,10 +299,8 @@ const { title, theme = 'default' } = Astro.props;
 
     const newSlide = Math.max(0, Math.min(index, totalSlides - 1));
 
-    // Remove active class from current slide
     slides[currentSlide]?.classList.remove('active');
 
-    // Add active class to new slide
     currentSlide = newSlide;
     slides[currentSlide]?.classList.add('active');
 
@@ -331,7 +329,6 @@ const { title, theme = 'default' } = Astro.props;
     container?.classList.toggle('overview-mode');
   }
 
-  // Initialize on load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initPresentation);
   } else {
