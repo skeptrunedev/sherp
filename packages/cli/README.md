@@ -28,9 +28,17 @@ sherp preview
 ## Commands
 
 - `sherp init <name>` - Initialize a new presentation project
-- `sherp dev` - Start development server
+- `sherp dev` - Start development server with live reload
 - `sherp build` - Build presentation for production
 - `sherp preview` - Preview production build
+
+## Project Structure
+
+Each Sherp project contains a single `presentation.mdx` file along with optional customization files:
+
+- `presentation.mdx` - Your presentation content
+- `sherp.config.json` - Project configuration
+- `styles/` - Custom CSS files
 
 ## Documentation
 

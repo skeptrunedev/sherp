@@ -6,7 +6,7 @@ import PresentationViewer from '../components/PresentationViewer.astro';
 import '../styles/marp-themes.css';
 
 const presentation = await presentationService.getPresentation();
-const rawContent = presentation.body;
+const rawContent = presentation.body ?? '';
 const slides = parseSlides(rawContent);
 
 const { paginate = false, theme = 'default' } = presentation.data;

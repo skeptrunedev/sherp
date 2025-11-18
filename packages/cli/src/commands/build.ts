@@ -1,11 +1,11 @@
 import { spawn } from 'child_process';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
 import { existsSync } from 'fs';
 import { setupWorkspace } from '../utils/workspace.js';
-import { mkdir, cp } from 'fs/promises';
-import type { BuildOptions } from '../types.js';
+import { mkdir, cp, readFile } from 'fs/promises';
+import type { BuildOptions, SherpConfig } from '../types.js';
 
 export async function build(options: BuildOptions): Promise<void> {
   const spinner = ora('Building presentation').start();
@@ -24,6 +24,16 @@ export async function build(options: BuildOptions): Promise<void> {
       process.exit(1);
     }
 
+    // Read config to get presentation file
+    const config: SherpConfig = JSON.parse(await readFile(configPath, 'utf-8'));
+    const presentationFile = join(
+      cwd,
+      config.presentationFile || './presentation.mdx'
+    );
+
+    // Get the directory containing the presentation file for Astro loader
+    const presentationDir = dirname(presentationFile);
+
     // Setup workspace
     const workspaceDir = await setupWorkspace(cwd);
 
@@ -35,6 +45,10 @@ export async function build(options: BuildOptions): Promise<void> {
         cwd: workspaceDir,
         stdio: 'inherit',
         shell: true,
+        env: {
+          ...process.env,
+          VITE_PRESENTATIONS_DIR: presentationDir,
+        },
       });
 
       astroProcess.on('error', reject);

@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { readFile } from 'fs/promises';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -31,12 +31,15 @@ export async function dev(options: DevOptions): Promise<void> {
       process.exit(1);
     }
 
-    // Read config to get presentation directory
+    // Read config to get presentation file
     const config: SherpConfig = JSON.parse(await readFile(configPath, 'utf-8'));
-    const presentationsDir = join(
+    const presentationFile = join(
       cwd,
-      config.presentations || './presentations'
+      config.presentationFile || './presentation.mdx'
     );
+
+    // Get the directory containing the presentation file for Astro loader
+    const presentationDir = dirname(presentationFile);
 
     // Build function to be reused
     async function buildPresentation(): Promise<boolean> {
@@ -51,8 +54,12 @@ export async function dev(options: DevOptions): Promise<void> {
         await new Promise<void>((resolve, reject) => {
           const astroProcess = spawn('npx', ['astro', 'build'], {
             cwd: workspaceDir!,
-            stdio: 'pipe',
+            stdio: 'inherit',
             shell: true,
+            env: {
+              ...process.env,
+              VITE_PRESENTATIONS_DIR: presentationDir,
+            },
           });
 
           astroProcess.on('error', reject);
@@ -93,8 +100,8 @@ export async function dev(options: DevOptions): Promise<void> {
     );
     console.log(chalk.gray('  ➜ Watching for changes...\n'));
 
-    // Watch for file changes in presentations directory
-    watcher = chokidar.watch(presentationsDir, {
+    // Watch for file changes in presentation file
+    watcher = chokidar.watch(presentationFile, {
       ignored: /(^|[\/\\])\../, // ignore dotfiles
       persistent: true,
       ignoreInitial: true,
@@ -105,38 +112,6 @@ export async function dev(options: DevOptions): Promise<void> {
 
       isRebuilding = true;
       console.log(chalk.yellow(`\n  File changed: ${path}`));
-
-      const success = await buildPresentation();
-
-      if (success && serverInstance) {
-        serverInstance.reload();
-        console.log(chalk.green('  Page reloaded\n'));
-      }
-
-      isRebuilding = false;
-    });
-
-    watcher.on('add', async (path: string) => {
-      if (isRebuilding) return;
-
-      isRebuilding = true;
-      console.log(chalk.yellow(`\n  File added: ${path}`));
-
-      const success = await buildPresentation();
-
-      if (success && serverInstance) {
-        serverInstance.reload();
-        console.log(chalk.green('  Page reloaded\n'));
-      }
-
-      isRebuilding = false;
-    });
-
-    watcher.on('unlink', async (path: string) => {
-      if (isRebuilding) return;
-
-      isRebuilding = true;
-      console.log(chalk.yellow(`\n  File removed: ${path}`));
 
       const success = await buildPresentation();
 

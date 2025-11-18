@@ -8,10 +8,8 @@ const defaultConfig = {
   theme: 'default',
   title: 'My Presentation',
   author: 'Your Name',
-  presentations: './presentations',
+  presentationFile: './presentation.mdx',
   customStyles: './styles/custom.css',
-  customScripts: './scripts/custom.js',
-  components: './components',
 };
 
 const examplePresentation = `---
@@ -42,7 +40,7 @@ Create slides with markdown, customize with ease
 
 ## Getting Started
 
-1. Edit \`presentations/example.mdx\`
+1. Edit \`presentation.mdx\`
 2. Run \`sherp dev\` to see changes
 3. Navigate with arrow keys or click
 4. Press \`O\` for overview mode
@@ -55,8 +53,6 @@ Edit \`sherp.config.json\` to:
 
 - Change themes
 - Add custom CSS
-- Include custom scripts
-- Configure components
 
 ---
 
@@ -79,17 +75,6 @@ const customCssExample = `/* Custom styles for your presentation */
 }
 `;
 
-const customJsExample = `// Custom JavaScript for your presentation
-
-// Example: Log slide changes
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Presentation loaded!');
-
-  // You can add custom interactions here
-  // Access slides, add event listeners, etc.
-});
-`;
-
 export async function init(options: InitOptions): Promise<void> {
   const spinner = ora('Initializing sherp project').start();
 
@@ -99,10 +84,7 @@ export async function init(options: InitOptions): Promise<void> {
 
     // Create directory structure
     await mkdir(projectPath, { recursive: true });
-    await mkdir(join(projectPath, 'presentations'), { recursive: true });
     await mkdir(join(projectPath, 'styles'), { recursive: true });
-    await mkdir(join(projectPath, 'scripts'), { recursive: true });
-    await mkdir(join(projectPath, 'components'), { recursive: true });
 
     // Write config file
     await writeFile(
@@ -110,9 +92,9 @@ export async function init(options: InitOptions): Promise<void> {
       JSON.stringify(defaultConfig, null, 2)
     );
 
-    // Write example presentation
+    // Write presentation file
     await writeFile(
-      join(projectPath, 'presentations', 'example.mdx'),
+      join(projectPath, 'presentation.mdx'),
       examplePresentation
     );
 
@@ -121,9 +103,6 @@ export async function init(options: InitOptions): Promise<void> {
       join(projectPath, 'styles', 'custom.css'),
       customCssExample
     );
-
-    // Write custom JS example
-    await writeFile(join(projectPath, 'scripts', 'custom.js'), customJsExample);
 
     // Write README
     const readme = `# ${projectName}
@@ -145,11 +124,9 @@ sherp dev
 
 ## Project Structure
 
-- \`presentations/\` - Your MDX presentation files
+- \`presentation.mdx\` - Your presentation file
 - \`sherp.config.json\` - Configuration
 - \`styles/\` - Custom CSS files
-- \`scripts/\` - Custom JavaScript files
-- \`components/\` - Custom React/JSX components
 
 ## Documentation
 
@@ -164,7 +141,7 @@ Visit https://github.com/skeptrunedev/sherp for full documentation.
     console.log(chalk.cyan(`  cd ${projectName}`));
     console.log(chalk.cyan('  sherp dev'));
     console.log(
-      '\n' + chalk.gray('Edit presentations/example.mdx to get started!')
+      '\n' + chalk.gray('Edit presentation.mdx to get started!')
     );
   } catch (error) {
     spinner.fail(chalk.red('Failed to initialize project'));

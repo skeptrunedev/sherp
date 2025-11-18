@@ -17,10 +17,8 @@ export interface SherpConfig {
   theme?: string;
   title?: string;
   author?: string;
-  presentations?: string;
+  presentationFile?: string;
   customStyles?: string;
-  customScripts?: string;
-  components?: string;
 }
 
 export interface ServerOptions {
