@@ -1,10 +1,11 @@
-import { createServer } from 'http';
+import { createServer, IncomingMessage, ServerResponse, Server } from 'http';
 import { readFile, stat } from 'fs/promises';
 import { join, extname } from 'path';
 import { existsSync } from 'fs';
 import chalk from 'chalk';
+import type { ServerOptions, ServerInstance } from '../types.js';
 
-const MIME_TYPES = {
+const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html',
   '.js': 'text/javascript',
   '.css': 'text/css',
@@ -44,12 +45,18 @@ const LIVE_RELOAD_SCRIPT = `
  * Creates a simple static file server for serving built Astro files
  * with optional live reload support
  */
-export function createStaticServer(distPath, options = {}) {
+export function createStaticServer(
+  distPath: string,
+  options: ServerOptions = {}
+): Promise<ServerInstance> {
   const { host = '0.0.0.0', port = 4321, liveReload = false } = options;
-  const clients = [];
+  const clients: ServerResponse[] = [];
 
   // Request handler that will be reused
-  const requestHandler = async (req, res) => {
+  const requestHandler = async (
+    req: IncomingMessage,
+    res: ServerResponse
+  ): Promise<void> => {
     try {
       // Live reload SSE endpoint
       if (liveReload && req.url === '/__sherp_live_reload') {
@@ -71,7 +78,7 @@ export function createStaticServer(distPath, options = {}) {
         return;
       }
 
-      let filePath = req.url === '/' ? '/index.html' : req.url;
+      let filePath = req.url === '/' ? '/index.html' : req.url || '/';
 
       // Remove query string
       filePath = filePath.split('?')[0];
@@ -133,9 +140,9 @@ export function createStaticServer(distPath, options = {}) {
   };
 
   return new Promise((resolve, reject) => {
-    const tryPort = (currentPort) => {
+    const tryPort = (currentPort: number): void => {
       // Create a fresh server for this attempt
-      const server = createServer(requestHandler);
+      const server: Server = createServer(requestHandler);
 
       server.listen(currentPort, host, () => {
         // Successfully bound to this port
@@ -150,7 +157,7 @@ export function createStaticServer(distPath, options = {}) {
             });
           },
           close: () => {
-            return new Promise((resolveClose) => {
+            return new Promise<void>((resolveClose) => {
               // Close all SSE connections
               clients.forEach((client) => client.end());
               clients.length = 0;
@@ -160,7 +167,7 @@ export function createStaticServer(distPath, options = {}) {
         });
       });
 
-      server.on('error', (err) => {
+      server.on('error', (err: NodeJS.ErrnoException) => {
         if (err.code === 'EADDRINUSE') {
           console.log(
             chalk.yellow(

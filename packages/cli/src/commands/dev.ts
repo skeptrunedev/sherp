@@ -4,16 +4,17 @@ import { readFile } from 'fs/promises';
 import chalk from 'chalk';
 import ora from 'ora';
 import { existsSync } from 'fs';
-import chokidar from 'chokidar';
+import chokidar, { FSWatcher } from 'chokidar';
 import { setupWorkspace } from '../utils/workspace.js';
 import { createStaticServer } from '../utils/server.js';
+import type { DevOptions, ServerInstance, SherpConfig } from '../types.js';
 
-export async function dev(options) {
+export async function dev(options: DevOptions): Promise<void> {
   const spinner = ora('Starting development server').start();
 
-  let serverInstance = null;
-  let watcher = null;
-  let workspaceDir = null;
+  let serverInstance: ServerInstance | null = null;
+  let watcher: FSWatcher | null = null;
+  let workspaceDir: string | null = null;
   let isRebuilding = false;
 
   const cwd = process.cwd();
@@ -31,14 +32,14 @@ export async function dev(options) {
     }
 
     // Read config to get presentation directory
-    const config = JSON.parse(await readFile(configPath, 'utf-8'));
+    const config: SherpConfig = JSON.parse(await readFile(configPath, 'utf-8'));
     const presentationsDir = join(
       cwd,
       config.presentations || './presentations'
     );
 
     // Build function to be reused
-    async function buildPresentation() {
+    async function buildPresentation(): Promise<boolean> {
       spinner.text = 'Building presentation';
       spinner.start();
 
@@ -47,9 +48,9 @@ export async function dev(options) {
         workspaceDir = await setupWorkspace(cwd);
 
         // Build the Astro project to static files
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
           const astroProcess = spawn('npx', ['astro', 'build'], {
-            cwd: workspaceDir,
+            cwd: workspaceDir!,
             stdio: 'pipe',
             shell: true,
           });
@@ -76,7 +77,7 @@ export async function dev(options) {
     spinner.text = 'Starting static server';
 
     // Serve the built files with our custom server (with live reload enabled)
-    const distPath = join(workspaceDir, 'dist');
+    const distPath = join(workspaceDir!, 'dist');
     serverInstance = await createStaticServer(distPath, {
       host: options.host,
       port: parseInt(options.port),
@@ -99,7 +100,7 @@ export async function dev(options) {
       ignoreInitial: true,
     });
 
-    watcher.on('change', async (path) => {
+    watcher.on('change', async (path: string) => {
       if (isRebuilding) return;
 
       isRebuilding = true;
@@ -115,7 +116,7 @@ export async function dev(options) {
       isRebuilding = false;
     });
 
-    watcher.on('add', async (path) => {
+    watcher.on('add', async (path: string) => {
       if (isRebuilding) return;
 
       isRebuilding = true;
@@ -131,7 +132,7 @@ export async function dev(options) {
       isRebuilding = false;
     });
 
-    watcher.on('unlink', async (path) => {
+    watcher.on('unlink', async (path: string) => {
       if (isRebuilding) return;
 
       isRebuilding = true;

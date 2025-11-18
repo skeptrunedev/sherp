@@ -4,9 +4,10 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { existsSync } from 'fs';
 import { setupWorkspace } from '../utils/workspace.js';
-import { copyFile, mkdir, cp } from 'fs/promises';
+import { mkdir, cp } from 'fs/promises';
+import type { BuildOptions } from '../types.js';
 
-export async function build(options) {
+export async function build(options: BuildOptions): Promise<void> {
   const spinner = ora('Building presentation').start();
 
   try {
@@ -29,7 +30,7 @@ export async function build(options) {
     spinner.text = 'Building with Astro';
 
     // Run Astro build
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const astroProcess = spawn('npx', ['astro', 'build'], {
         cwd: workspaceDir,
         stdio: 'inherit',

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { init } from '../cli/commands/init.js';
-import { dev } from '../cli/commands/dev.js';
-import { build } from '../cli/commands/build.js';
-import { preview } from '../cli/commands/preview.js';
+import { init } from './commands/init.js';
+import { dev } from './commands/dev.js';
+import { build } from './commands/build.js';
+import { preview } from './commands/preview.js';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';

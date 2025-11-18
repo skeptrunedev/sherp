@@ -1,7 +1,8 @@
 import { defineCollection, z } from 'astro:content';
+import { presentationsLoader } from './loader';
 
 const presentations = defineCollection({
-  type: 'content',
+  loader: presentationsLoader(),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),

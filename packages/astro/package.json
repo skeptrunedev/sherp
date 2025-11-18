@@ -1,0 +1,47 @@
+{
+  "name": "@skeptrune/sherp-astro",
+  "version": "0.1.2",
+  "description": "Astro-based presentation engine for Sherp",
+  "type": "module",
+  "files": [
+    "src",
+    "public",
+    "astro.config.mjs",
+    "tsconfig.json"
+  ],
+  "keywords": [
+    "presentation",
+    "slides",
+    "astro",
+    "markdown",
+    "mdx"
+  ],
+  "author": "skeptrunedev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skeptrunedev/sherp.git",
+    "directory": "packages/astro"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.10",
+    "astro": "^5.15.8",
+    "marked": "^17.0.0",
+    "mdast-util-to-string": "^4.0.0",
+    "unist-util-visit": "^5.0.0",
+    "yaml": "^2.8.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1"
+  }
+}

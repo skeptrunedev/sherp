@@ -2,6 +2,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
+import type { InitOptions } from '../types.js';
 
 const defaultConfig = {
   theme: 'default',
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 `;
 
-export async function init(options) {
+export async function init(options: InitOptions): Promise<void> {
   const spinner = ora('Initializing sherp project').start();
 
   try {

@@ -1,21 +1,16 @@
 {
-  "name": "@skeptrune/sherp",
+  "name": "@skeptrune/sherp-workspace",
   "version": "0.1.2",
-  "description": "Marp-style presentations made simple with Markdown/MDX",
+  "private": true,
+  "description": "Monorepo for Sherp - Marp-style presentations made simple",
   "type": "module",
-  "bin": {
-    "sherp": "./bin/sherp.js"
-  },
-  "main": "./bin/sherp.js",
-  "files": [
-    "bin",
-    "cli",
-    "src",
-    "public",
-    "astro.config.mjs",
-    "tsconfig.json",
-    "package-lock.json"
+  "workspaces": [
+    "packages/*"
   ],
+  "scripts": {
+    "format": "prettier --check \"**/*.{js,mjs,ts,astro,json,md}\"",
+    "format:fix": "prettier --write \"**/*.{js,mjs,ts,astro,json,md}\""
+  },
   "keywords": [
     "presentation",
     "slides",
@@ -29,27 +24,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/skeptrunedev/sherp.git"
-  },
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro",
-    "format": "prettier --check \"**/*.{js,mjs,ts,astro,json,md}\"",
-    "format:fix": "prettier --write \"**/*.{js,mjs,ts,astro,json,md}\""
-  },
-  "dependencies": {
-    "@astrojs/mdx": "^4.3.10",
-    "astro": "^5.15.8",
-    "chalk": "^5.6.2",
-    "chokidar": "^4.0.3",
-    "commander": "^14.0.2",
-    "gray-matter": "^4.0.3",
-    "marked": "^17.0.0",
-    "mdast-util-to-string": "^4.0.0",
-    "ora": "^9.0.0",
-    "unist-util-visit": "^5.0.0",
-    "yaml": "^2.8.1"
   },
   "engines": {
     "node": ">=18.0.0"

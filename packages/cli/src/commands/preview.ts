@@ -3,11 +3,12 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { existsSync } from 'fs';
 import { createStaticServer } from '../utils/server.js';
+import type { PreviewOptions, ServerInstance } from '../types.js';
 
-export async function preview(options) {
+export async function preview(options: PreviewOptions): Promise<void> {
   const spinner = ora('Starting preview server').start();
 
-  let serverInstance = null;
+  let serverInstance: ServerInstance | null = null;
 
   try {
     const cwd = process.cwd();

@@ -4,6 +4,13 @@
 
 Sherp is a CLI tool that lets you create beautiful, interactive presentations using just Markdown. No need to understand Astro, React, or any framework - just write Markdown and go!
 
+## 📦 Monorepo Structure
+
+This is a monorepo containing two packages:
+
+- **[@skeptrune/sherp-cli](./packages/cli)** - The CLI tool for creating and managing presentations
+- **[@skeptrune/sherp-astro](./packages/astro)** - The Astro-based presentation engine
+
 ## ✨ Features
 
 - 📝 **Write in Markdown/MDX** - Focus on content, not code
@@ -20,7 +27,7 @@ Sherp is a CLI tool that lets you create beautiful, interactive presentations us
 ### Installation
 
 ```bash
-npm install -g @skeptrune/sherp
+npm install -g @skeptrune/sherp-cli
 ```
 
 ### Create a new presentation
@@ -183,6 +190,21 @@ Deploy the `dist/` folder to:
 - **Vercel** - `vercel --prod`
 - **GitHub Pages** - Push to `gh-pages` branch
 - Any static hosting service
+
+## 🛠️ Development
+
+This project uses npm workspaces. To develop locally:
+
+```bash
+# Install all dependencies
+npm install
+
+# Work on the CLI package
+cd packages/cli
+
+# Work on the Astro package
+cd packages/astro
+```
 
 ## 🤝 Contributing
 

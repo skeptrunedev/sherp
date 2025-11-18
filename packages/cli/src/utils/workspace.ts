@@ -4,6 +4,7 @@ import { join, resolve, dirname } from 'path';
 import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import type { SherpConfig } from '../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,9 +13,11 @@ const __dirname = dirname(__filename);
  * Sets up a temporary workspace by copying the Sherp core files
  * and merging in user's presentations, config, and customizations
  */
-export async function setupWorkspace(userProjectDir) {
-  // Get sherp package root (the installed npm package)
-  const sherpRoot = resolve(__dirname, '../..');
+export async function setupWorkspace(userProjectDir: string): Promise<string> {
+  // Get sherp-astro package root (the installed npm package)
+  // When published, this will resolve to node_modules/@skeptrune/sherp-astro
+  // In development workspace, this resolves to packages/astro
+  const sherpAstroRoot = resolve(__dirname, '../../../astro');
 
   // Create temp directory
   const tempDir = await mkdtemp(join(tmpdir(), 'sherp-'));
@@ -29,7 +32,7 @@ export async function setupWorkspace(userProjectDir) {
   ];
 
   for (const dir of coreDirs) {
-    const srcPath = join(sherpRoot, dir);
+    const srcPath = join(sherpAstroRoot, dir);
     const destPath = join(tempDir, dir);
     if (existsSync(srcPath)) {
       await cp(srcPath, destPath, { recursive: true });
@@ -37,21 +40,21 @@ export async function setupWorkspace(userProjectDir) {
   }
 
   for (const file of coreFiles) {
-    const srcPath = join(sherpRoot, file);
+    const srcPath = join(sherpAstroRoot, file);
     const destPath = join(tempDir, file);
     if (existsSync(srcPath)) {
       await cp(srcPath, destPath);
     }
   }
 
-  // Copy node_modules from sherp package to temp workspace
-  const nodeModulesPath = join(sherpRoot, 'node_modules');
+  // Copy node_modules from sherp-astro package to temp workspace
+  const nodeModulesPath = join(sherpAstroRoot, 'node_modules');
   const destNodeModules = join(tempDir, 'node_modules');
 
   if (existsSync(nodeModulesPath)) {
     await cp(nodeModulesPath, destNodeModules, { recursive: true });
   } else {
-    // If node_modules doesn't exist in sherp root, install dependencies
+    // If node_modules doesn't exist in astro package, install dependencies
     console.log('Installing dependencies...');
     execSync('npm install --prefer-offline --no-audit', {
       cwd: tempDir,
@@ -61,7 +64,7 @@ export async function setupWorkspace(userProjectDir) {
 
   // Read user config
   const configPath = join(userProjectDir, 'sherp.config.json');
-  const config = JSON.parse(await readFile(configPath, 'utf-8'));
+  const config: SherpConfig = JSON.parse(await readFile(configPath, 'utf-8'));
 
   // Copy user presentations
   const presentationsDir = resolve(
@@ -118,7 +121,7 @@ export async function setupWorkspace(userProjectDir) {
   return tempDir;
 }
 
-async function injectCustomStyles(workspaceDir) {
+async function injectCustomStyles(workspaceDir: string): Promise<void> {
   const indexPath = join(workspaceDir, 'src', 'pages', 'index.astro');
   let content = await readFile(indexPath, 'utf-8');
 
@@ -132,7 +135,7 @@ async function injectCustomStyles(workspaceDir) {
   }
 }
 
-async function injectCustomScript(workspaceDir) {
+async function injectCustomScript(workspaceDir: string): Promise<void> {
   const indexPath = join(workspaceDir, 'src', 'pages', 'index.astro');
   let content = await readFile(indexPath, 'utf-8');
 
@@ -146,7 +149,10 @@ async function injectCustomScript(workspaceDir) {
   }
 }
 
-async function updateDefaultTheme(workspaceDir, config) {
+async function updateDefaultTheme(
+  workspaceDir: string,
+  config: SherpConfig
+): Promise<void> {
   const configPath = join(workspaceDir, 'src', 'content', 'config.ts');
   let content = await readFile(configPath, 'utf-8');
 
