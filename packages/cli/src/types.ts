@@ -1,5 +1,5 @@
 export interface InitOptions {
-  name: string;
+  name?: string;
 }
 
 export interface DevOptions {

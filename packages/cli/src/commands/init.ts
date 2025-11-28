@@ -1,8 +1,33 @@
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
+import { createInterface } from 'readline';
 import chalk from 'chalk';
 import ora from 'ora';
 import type { InitOptions } from '../types.js';
+
+const DEFAULT_PROJECT_NAME = 'my-presentation';
+
+async function promptForName(providedName?: string): Promise<string> {
+  // If name was provided as CLI arg, use it
+  if (providedName) {
+    return providedName;
+  }
+
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    rl.question(
+      chalk.cyan(`Project directory name (${DEFAULT_PROJECT_NAME}): `),
+      (answer) => {
+        rl.close();
+        resolve(answer.trim() || DEFAULT_PROJECT_NAME);
+      }
+    );
+  });
+}
 
 const defaultConfig = {
   title: 'My Presentation',
@@ -57,25 +82,13 @@ Edit \`sherp.config.json\` to:
 Edit this file and see your changes live
 `;
 
-const customCssExample = `/* Custom styles for your presentation */
-
-/* Example: Custom heading colors */
-.slide h1 {
-  color: #ff6b6b;
-}
-
-/* Example: Custom background for specific slides */
-.slide[data-slide="1"] {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-`;
+const customCssExample = ``;
 
 export async function init(options: InitOptions): Promise<void> {
+  const projectName = await promptForName(options.name);
   const spinner = ora('Initializing sherp project').start();
 
   try {
-    const projectName = options.name;
     const projectPath = join(process.cwd(), projectName);
 
     // Create directory structure

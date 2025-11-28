@@ -23,7 +23,7 @@ program
 program
   .command('init [name]')
   .description('Initialize a new sherp presentation project')
-  .action((name) => init({ name: name || 'my-presentation' }));
+  .action((name) => init({ name }));
 
 program
   .command('dev')
