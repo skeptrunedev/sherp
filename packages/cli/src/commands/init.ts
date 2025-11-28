@@ -5,7 +5,6 @@ import ora from 'ora';
 import type { InitOptions } from '../types.js';
 
 const defaultConfig = {
-  theme: 'default',
   title: 'My Presentation',
   author: 'Your Name',
   presentationFile: './presentation.mdx',
@@ -16,7 +15,6 @@ const examplePresentation = `---
 title: "Welcome to Sherp"
 description: "Create beautiful presentations with Markdown"
 author: "Your Name"
-theme: "default"
 paginate: true
 ---
 
@@ -31,7 +29,6 @@ Create slides with markdown, customize with ease
 ## Features
 
 - 📝 Write in Markdown/MDX
-- 🎨 Custom themes and styles
 - ⌨️ Keyboard navigation
 - 📱 Mobile responsive
 - 🔧 Easy to extend
@@ -51,7 +48,6 @@ Create slides with markdown, customize with ease
 
 Edit \`sherp.config.json\` to:
 
-- Change themes
 - Add custom CSS
 
 ---
@@ -93,10 +89,7 @@ export async function init(options: InitOptions): Promise<void> {
     );
 
     // Write presentation file
-    await writeFile(
-      join(projectPath, 'presentation.mdx'),
-      examplePresentation
-    );
+    await writeFile(join(projectPath, 'presentation.mdx'), examplePresentation);
 
     // Write custom CSS example
     await writeFile(
@@ -104,45 +97,15 @@ export async function init(options: InitOptions): Promise<void> {
       customCssExample
     );
 
-    // Write README
-    const readme = `# ${projectName}
-
-A sherp presentation project.
-
-## Getting Started
-
-\`\`\`bash
-cd ${projectName}
-sherp dev
-\`\`\`
-
-## Commands
-
-- \`sherp dev\` - Start development server
-- \`sherp build\` - Build for production
-- \`sherp preview\` - Preview production build
-
-## Project Structure
-
-- \`presentation.mdx\` - Your presentation file
-- \`sherp.config.json\` - Configuration
-- \`styles/\` - Custom CSS files
-
-## Documentation
-
-Visit https://github.com/skeptrunedev/sherp for full documentation.
-`;
-
-    await writeFile(join(projectPath, 'README.md'), readme);
+    // README.md is intentionally not created to avoid conflicts with the presentation loader
+    // which loads all .md/.mdx files from the project directory
 
     spinner.succeed(chalk.green('Project initialized successfully!'));
 
     console.log('\n' + chalk.bold('Next steps:'));
     console.log(chalk.cyan(`  cd ${projectName}`));
     console.log(chalk.cyan('  sherp dev'));
-    console.log(
-      '\n' + chalk.gray('Edit presentation.mdx to get started!')
-    );
+    console.log('\n' + chalk.gray('Edit presentation.mdx to get started!'));
   } catch (error) {
     spinner.fail(chalk.red('Failed to initialize project'));
     console.error(error);

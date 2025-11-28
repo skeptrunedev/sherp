@@ -11,24 +11,41 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  * Falls back to the default 'src/content/presentations' if not set.
  */
 export function presentationsLoader() {
-  const presentationsDir = import.meta.env.VITE_PRESENTATIONS_DIR || process.env.VITE_PRESENTATIONS_DIR;
+  const presentationsDir =
+    import.meta.env.VITE_PRESENTATIONS_DIR ||
+    process.env.VITE_PRESENTATIONS_DIR;
+
+  // Pattern to match all .md and .mdx files
+  const pattern = '**/*.{md,mdx}';
+
+  // Filter function to exclude README files (case insensitive)
+  const filter = (entry: { relativePath: string }) => {
+    const filename = path.basename(entry.relativePath).toLowerCase();
+    return !filename.startsWith('readme.');
+  };
 
   if (!presentationsDir) {
-    console.warn('[presentations-loader] VITE_PRESENTATIONS_DIR not set, using default location');
+    console.warn(
+      '[presentations-loader] VITE_PRESENTATIONS_DIR not set, using default location'
+    );
     // Use default Astro content collection path
     return glob({
-      pattern: '**/*.{md,mdx}',
-      base: path.resolve(__dirname, './presentations')
+      pattern,
+      base: path.resolve(__dirname, './presentations'),
+      filter,
     });
   }
 
   // Resolve the path relative to the astro package root
   const resolvedPath = path.resolve(__dirname, '../..', presentationsDir);
 
-  console.log(`[presentations-loader] Loading presentations from: ${resolvedPath}`);
+  console.log(
+    `[presentations-loader] Loading presentations from: ${resolvedPath}`
+  );
 
   return glob({
-    pattern: '**/*.{md,mdx}',
-    base: resolvedPath
+    pattern,
+    base: resolvedPath,
+    filter,
   });
 }

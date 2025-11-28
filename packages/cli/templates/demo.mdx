@@ -2,7 +2,6 @@
 title: "Marp on Astro Demo"
 description: "A demonstration of Marp-style presentations built with Astro, MDX, and Content Collections"
 author: "Your Name"
-theme: "default"
 paginate: true
 ---
 
@@ -19,7 +18,6 @@ A complete replication of Marp functionality using Astro's Content Collections A
 - Single file presentations (MDX)
 - Slide splitting with horizontal rules
 - Marp-style directives
-- Theme support
 - Navigation controls
 - Keyboard shortcuts
 
@@ -32,7 +30,6 @@ Create a new MDX file in `src/content/presentations/`:
 ```mdx
 ---
 title: "My Presentation"
-theme: "default"
 paginate: true
 ---
 
@@ -63,7 +60,6 @@ Here's some example code:
 ```typescript
 interface Presentation {
   title: string;
-  theme: string;
   slides: Slide[];
 }
 
@@ -104,20 +100,7 @@ Unordered lists also work:
 |---------|-----------|-------|
 | Slides | Yes | Split by `---` |
 | Directives | Yes | Global and local |
-| Themes | Yes | Multiple built-in |
 | Navigation | Yes | Keyboard + mouse |
-
----
-
-## Multiple Themes
-
-This implementation includes five themes:
-
-1. **default** - Clean, professional
-2. **gaia** - Purple gradient
-3. **uncover** - Bold blue
-4. **dark** - VS Code inspired
-5. **light** - Minimal
 
 ---
 

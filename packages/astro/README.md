@@ -6,7 +6,6 @@ This package contains the core Astro application that powers Sherp presentations
 
 - Astro configuration and build setup
 - Presentation viewer and slide components
-- Built-in themes (default, gaia, uncover, dark, light)
 - Markdown/MDX processing and slide parsing
 - Keyboard navigation and overview mode
 - Responsive design with 16:9 aspect ratio

@@ -1,13 +1,11 @@
 ---
 interface Props {
   title: string;
-  theme?: string;
 }
 
-const { title, theme = 'default' } = Astro.props;
 ---
 
-<div class="presentation-outer" data-theme={theme}>
+<div class="presentation-outer">
   <div class="presentation-container">
     <div class="slides-wrapper" id="slides-wrapper">
       <slot />
@@ -33,7 +31,6 @@ const { title, theme = 'default' } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #000;
     overflow: hidden;
   }
 
@@ -93,9 +90,6 @@ const { title, theme = 'default' } = Astro.props;
     display: flex;
     align-items: center;
     gap: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 10px 20px;
-    border-radius: 25px;
     z-index: 1000;
     opacity: 0;
     transition: opacity 0.3s;
@@ -108,15 +102,8 @@ const { title, theme = 'default' } = Astro.props;
   .slide-navigation button {
     background: transparent;
     border: none;
-    color: white;
-    font-size: 1.5rem;
     cursor: pointer;
     padding: 5px 15px;
-    transition: transform 0.2s;
-  }
-
-  .slide-navigation button:hover {
-    transform: scale(1.2);
   }
 
   .slide-navigation button:disabled {
@@ -125,8 +112,6 @@ const { title, theme = 'default' } = Astro.props;
   }
 
   #slide-counter {
-    color: white;
-    font-size: 0.9rem;
     min-width: 60px;
     text-align: center;
   }
@@ -147,19 +132,10 @@ const { title, theme = 'default' } = Astro.props;
   }
 
   .presentation-controls button {
-    background: rgba(0, 0, 0, 0.7);
     border: none;
-    color: white;
-    font-size: 1.2rem;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .presentation-controls button:hover {
-    background: rgba(0, 0, 0, 0.9);
   }
 
   .presentation-outer.overview-mode {
@@ -180,7 +156,6 @@ const { title, theme = 'default' } = Astro.props;
     gap: 20px;
     padding: 20px;
     overflow-y: auto;
-    background: #222;
     position: static;
   }
 
@@ -192,12 +167,6 @@ const { title, theme = 'default' } = Astro.props;
     min-height: 200px;
     aspect-ratio: 16 / 9;
     cursor: pointer;
-    border: 2px solid #444;
-    transition: border-color 0.2s;
-  }
-
-  .presentation-outer.overview-mode :global(.slide:hover) {
-    border-color: #0288d1;
   }
 </style>
 

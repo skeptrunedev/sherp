@@ -14,7 +14,6 @@ export interface PreviewOptions {
 }
 
 export interface SherpConfig {
-  theme?: string;
   title?: string;
   author?: string;
   presentationFile?: string;

@@ -14,7 +14,6 @@ This is a monorepo containing two packages:
 ## ✨ Features
 
 - 📝 **Write in Markdown/MDX** - Focus on content, not code
-- 🎨 **Built-in themes** - Multiple professional themes included
 - 🎯 **Zero config** - Works out of the box
 - ⌨️ **Keyboard navigation** - Arrow keys, spacebar, and shortcuts
 - 📱 **Mobile responsive** - 16:9 aspect ratio that scales perfectly
@@ -62,7 +61,6 @@ Create MDX files in the `presentations/` folder:
 ---
 title: 'My Awesome Talk'
 author: 'Your Name'
-theme: 'default'
 paginate: true
 ---
 
@@ -93,7 +91,6 @@ Edit `sherp.config.json` to customize your presentation:
 
 ```json
 {
-  "theme": "default",
   "title": "My Presentation",
   "author": "Your Name",
   "presentations": "./presentations",
@@ -102,16 +99,6 @@ Edit `sherp.config.json` to customize your presentation:
   "components": "./components"
 }
 ```
-
-## 🎨 Themes
-
-Built-in themes:
-
-- `default` - Clean and professional
-- `gaia` - Purple gradient
-- `uncover` - Bold blue
-- `dark` - VS Code inspired
-- `light` - Minimal
 
 ## 🎯 Commands
 

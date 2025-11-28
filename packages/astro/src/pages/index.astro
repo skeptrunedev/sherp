@@ -3,13 +3,12 @@ import presentationService from '../lib/presentationService';
 import { parseSlides } from '../lib/slideParser';
 import Slide from '../components/Slide.astro';
 import PresentationViewer from '../components/PresentationViewer.astro';
-import '../styles/marp-themes.css';
 
 const presentation = await presentationService.getPresentation();
 const rawContent = presentation.body ?? '';
 const slides = parseSlides(rawContent);
 
-const { paginate = false, theme = 'default' } = presentation.data;
+const { paginate = false } = presentation.data;
 const slidesWithGlobalDirectives = slides.map((slide) => ({
   ...slide,
   directives: {
@@ -37,14 +36,13 @@ const slidesWithGlobalDirectives = slides.map((slide) => ({
     }
   </head>
   <body>
-    <PresentationViewer title={presentation.data.title} theme={theme}>
+    <PresentationViewer title={presentation.data.title}>
       {
         slidesWithGlobalDirectives.map((slide, index) => (
           <Slide
             directives={slide.directives}
             slideNumber={index + 1}
             totalSlides={slides.length}
-            theme={theme}
           >
             <div set:html={slide.content} />
           </Slide>

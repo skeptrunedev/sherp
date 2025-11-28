@@ -6,10 +6,9 @@ interface Props {
   directives: SlideDirectives;
   slideNumber: number;
   totalSlides: number;
-  theme?: string;
 }
 
-const { directives, slideNumber, totalSlides, theme = 'default' } = Astro.props;
+const { directives, slideNumber, totalSlides } = Astro.props;
 
 const slideStyles = getSlideStyles(directives);
 const showPaginate = getEffectiveDirective(directives, 'paginate');
@@ -22,7 +21,6 @@ const className = getEffectiveDirective(directives, 'class');
   class:list={['slide', className]}
   style={slideStyles}
   data-slide={slideNumber}
-  data-theme={theme}
 >
   {header && <header class="slide-header" set:html={header} />}
 
@@ -51,6 +49,8 @@ const className = getEffectiveDirective(directives, 'class');
     padding: clamp(20px, 4vw, 70px);
     box-sizing: border-box;
     overflow: hidden;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    line-height: 1.6;
   }
 
   @container (max-width: 800px) {
@@ -101,107 +101,83 @@ const className = getEffectiveDirective(directives, 'class');
     z-index: 10;
   }
 
-  .slide[data-theme='default'] {
-    background: white;
-    color: #333;
-    font-family:
-      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-      Cantarell, sans-serif;
-    font-size: clamp(1rem, 2.5vw, 1.5rem);
-    line-height: 1.6;
-  }
-
-  .slide[data-theme='default'] :global(h1) {
+  .slide :global(h1) {
     font-size: 2.5em;
     margin: 0.3em 0 0.5em 0;
-    border-bottom: 2px solid #0288d1;
-    padding-bottom: 0.3em;
   }
 
-  .slide[data-theme='default'] :global(h2) {
+  .slide :global(h2) {
     font-size: 2em;
     margin: 0.3em 0 0.5em 0;
-    color: #0288d1;
   }
 
-  .slide[data-theme='default'] :global(h3) {
+  .slide :global(h3) {
     font-size: 1.5em;
     margin: 0.3em 0 0.5em 0;
   }
 
-  .slide[data-theme='default'] :global(h1:first-child),
-  .slide[data-theme='default'] :global(h2:first-child),
-  .slide[data-theme='default'] :global(h3:first-child) {
+  .slide :global(h1:first-child),
+  .slide :global(h2:first-child),
+  .slide :global(h3:first-child) {
     margin-top: 0;
   }
 
-  .slide[data-theme='default'] :global(ul),
-  .slide[data-theme='default'] :global(ol) {
+  .slide :global(ul),
+  .slide :global(ol) {
     margin: 0.5em 0;
     padding-left: 1.5em;
   }
 
-  .slide[data-theme='default'] :global(li) {
+  .slide :global(li) {
     margin: 0.3em 0;
   }
 
-  .slide[data-theme='default'] :global(code) {
-    background: #f5f5f5;
+  .slide :global(code) {
+    background: rgba(128, 128, 128, 0.1);
     padding: 0.2em 0.4em;
     border-radius: 3px;
-    font-family: 'Courier New', Courier, monospace;
     font-size: 0.9em;
   }
 
-  .slide[data-theme='default'] :global(pre) {
-    background: #f5f5f5;
+  .slide :global(pre) {
+    background: rgba(128, 128, 128, 0.1);
     padding: 1em;
     border-radius: 5px;
     overflow-x: auto;
     font-size: 0.8em;
   }
 
-  .slide[data-theme='default'] :global(pre code) {
+  .slide :global(pre code) {
     background: none;
     padding: 0;
   }
 
-  .slide[data-theme='default'] :global(blockquote) {
-    border-left: 4px solid #0288d1;
+  .slide :global(blockquote) {
+    border-left: 4px solid currentColor;
     margin: 1em 0;
     padding-left: 1em;
-    color: #666;
+    opacity: 0.7;
   }
 
-  .slide[data-theme='default'] :global(a) {
-    color: #0288d1;
-    text-decoration: none;
-  }
-
-  .slide[data-theme='default'] :global(a:hover) {
-    text-decoration: underline;
-  }
-
-  .slide[data-theme='default'] :global(img) {
+  .slide :global(img) {
     max-width: 100%;
     height: auto;
   }
 
-  .slide[data-theme='default'] :global(table) {
+  .slide :global(table) {
     border-collapse: collapse;
     width: 100%;
     margin: 1em 0;
   }
 
-  .slide[data-theme='default'] :global(th),
-  .slide[data-theme='default'] :global(td) {
-    border: 1px solid #ddd;
+  .slide :global(th),
+  .slide :global(td) {
+    border: 1px solid currentColor;
     padding: 0.5em;
     text-align: left;
   }
 
-  .slide[data-theme='default'] :global(th) {
-    background: #f5f5f5;
+  .slide :global(th) {
     font-weight: bold;
   }
 </style>
