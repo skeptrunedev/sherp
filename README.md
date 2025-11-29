@@ -1,8 +1,11 @@
-# Sherp 🎯
+# Sherp
 
-**Marp-style presentations made simple with Markdown/MDX**
+A CLI for building presentations from Markdown/MDX.
+Instant dev server, multiple themes, keyboard navigation, and PDF export.
 
-Sherp is a CLI tool that lets you create beautiful, interactive presentations using just Markdown. No need to understand Astro, React, or any framework - just write Markdown and go!
+```bash
+npm install -g @skeptrune/sherp-cli
+```
 
 ## 🎨 Themes
 

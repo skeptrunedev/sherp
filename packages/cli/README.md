@@ -1,8 +1,7 @@
 # @skeptrune/sherp-cli
 
-The CLI tool for creating and managing Sherp presentations.
-
-## Installation
+A CLI for building presentations from Markdown/MDX.
+Instant dev server, multiple themes, keyboard navigation, and PDF export.
 
 ```bash
 npm install -g @skeptrune/sherp-cli
