@@ -32,6 +32,32 @@ sherp preview
 - `sherp build` - Build presentation for production
 - `sherp preview` - Preview production build
 
+## Themes
+
+Sherp comes with four built-in themes:
+
+<table>
+<tr>
+<td align="center"><strong>Terminal</strong><br/><em>Green-on-black hacker aesthetic</em><br/><img src="../../assets/themes/terminal.png" width="400"/></td>
+<td align="center"><strong>Paper</strong><br/><em>Sepia/cream academic style</em><br/><img src="../../assets/themes/paper.png" width="400"/></td>
+</tr>
+<tr>
+<td align="center"><strong>Corporate</strong><br/><em>Professional navy/blue tones</em><br/><img src="../../assets/themes/corporate.png" width="400"/></td>
+<td align="center"><strong>Default</strong><br/><em>Minimal, no custom styles</em><br/><img src="../../assets/themes/default.png" width="400"/></td>
+</tr>
+</table>
+
+Select a theme during project creation:
+
+```bash
+# Use --theme or -t flag
+sherp init my-presentation --theme terminal
+sherp init my-presentation -t paper
+
+# Or choose interactively
+sherp init my-presentation
+```
+
 ## Project Structure
 
 Each Sherp project contains a single `presentation.mdx` file along with optional customization files:

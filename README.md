@@ -4,6 +4,29 @@
 
 Sherp is a CLI tool that lets you create beautiful, interactive presentations using just Markdown. No need to understand Astro, React, or any framework - just write Markdown and go!
 
+## 🎨 Themes
+
+Sherp comes with four built-in themes to get you started:
+
+<table>
+<tr>
+<td align="center"><strong>Terminal</strong><br/><em>Green-on-black hacker aesthetic</em><br/><img src="./assets/themes/terminal.png" width="400"/></td>
+<td align="center"><strong>Paper</strong><br/><em>Sepia/cream academic style</em><br/><img src="./assets/themes/paper.png" width="400"/></td>
+</tr>
+<tr>
+<td align="center"><strong>Corporate</strong><br/><em>Professional navy/blue tones</em><br/><img src="./assets/themes/corporate.png" width="400"/></td>
+<td align="center"><strong>Default</strong><br/><em>Minimal, no custom styles</em><br/><img src="./assets/themes/default.png" width="400"/></td>
+</tr>
+</table>
+
+Select a theme during project creation:
+
+```bash
+sherp init my-presentation --theme terminal
+```
+
+Or choose interactively when running `sherp init`.
+
 ## 📦 Monorepo Structure
 
 This is a monorepo containing two packages:
@@ -20,6 +43,7 @@ This is a monorepo containing two packages:
 - 🎪 **Overview mode** - Press 'O' to see all slides
 - 🔧 **Fully customizable** - Add your own CSS, JS, and React components
 - 🚀 **Fast dev experience** - Instant hot reload
+- 🎨 **Built-in themes** - Choose from multiple pre-built themes
 
 ## 🚀 Quick Start
 

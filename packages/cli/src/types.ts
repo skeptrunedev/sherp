@@ -1,5 +1,8 @@
+export type ThemeName = 'default' | 'corporate' | 'terminal' | 'paper';
+
 export interface InitOptions {
   name?: string;
+  theme?: ThemeName;
 }
 
 export interface DevOptions {

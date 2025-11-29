@@ -24,7 +24,8 @@ program
 program
   .command('init [name]')
   .description('Initialize a new sherp presentation project')
-  .action((name) => init({ name }));
+  .option('-t, --theme <theme>', 'Theme to use (default, corporate, terminal, paper)')
+  .action((name, options) => init({ name, theme: options.theme }));
 
 program
   .command('dev')
