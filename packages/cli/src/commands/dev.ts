@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import { join, dirname } from 'path';
-import { readFile } from 'fs/promises';
+import { readFile, cp } from 'fs/promises';
 import chalk from 'chalk';
 import ora from 'ora';
 import { existsSync } from 'fs';
@@ -68,6 +68,14 @@ export async function dev(options: DevOptions): Promise<void> {
             else reject(new Error(`Build failed with code ${code}`));
           });
         });
+
+        // Copy user's images folder to dist if it exists
+        const distPath = join(workspaceDir!, 'dist');
+        const userImagesDir = join(presentationDir, 'images');
+        const distImagesDir = join(distPath, 'images');
+        if (existsSync(userImagesDir)) {
+          await cp(userImagesDir, distImagesDir, { recursive: true });
+        }
 
         spinner.succeed(chalk.green('Build complete'));
         return true;

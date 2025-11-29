@@ -3,7 +3,7 @@ import { join, dirname } from 'path';
 import { createInterface } from 'readline';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
-import { readFile, mkdir, writeFile } from 'fs/promises';
+import { readFile, mkdir, writeFile, cp } from 'fs/promises';
 import chalk from 'chalk';
 import ora from 'ora';
 import { existsSync } from 'fs';
@@ -134,10 +134,19 @@ export async function exportPresentation(options: ExportOptions): Promise<void> 
       });
     });
 
-    spinner.text = 'Starting local server';
+    spinner.text = 'Copying presentation assets';
 
     // Start a local server to serve the built files
     const distPath = join(workspaceDir, 'dist');
+
+    // Copy user's images folder to dist if it exists
+    const userImagesDir = join(presentationDir, 'images');
+    const distImagesDir = join(distPath, 'images');
+    if (existsSync(userImagesDir)) {
+      await cp(userImagesDir, distImagesDir, { recursive: true });
+    }
+
+    spinner.text = 'Starting local server';
     serverInstance = await createStaticServer(distPath, {
       port: 4323,
       liveReload: false,
