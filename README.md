@@ -4,7 +4,7 @@ A CLI for building presentations from Markdown/MDX.
 Instant dev server, multiple themes, keyboard navigation, and PDF export.
 
 ```bash
-npm install -g @skeptrune/sherp-cli
+npm install -g @skeptrunedev/sherp-cli
 ```
 
 ## 🎨 Themes
@@ -34,8 +34,8 @@ Or choose interactively when running `sherp init`.
 
 This is a monorepo containing two packages:
 
-- **[@skeptrune/sherp-cli](./packages/cli)** - The CLI tool for creating and managing presentations
-- **[@skeptrune/sherp-astro](./packages/astro)** - The Astro-based presentation engine
+- **[@skeptrunedev/sherp-cli](./packages/cli)** - The CLI tool for creating and managing presentations
+- **[@skeptrunedev/sherp-astro](./packages/astro)** - The Astro-based presentation engine
 
 ## ✨ Features
 
@@ -53,7 +53,7 @@ This is a monorepo containing two packages:
 ### Installation
 
 ```bash
-npm install -g @skeptrune/sherp-cli
+npm install -g @skeptrunedev/sherp-cli
 ```
 
 ### Create a new presentation

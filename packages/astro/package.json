@@ -1,6 +1,6 @@
 {
-  "name": "@skeptrune/sherp-astro",
-  "version": "0.1.2",
+  "name": "@skeptrunedev/sherp-astro",
+  "version": "0.1.6",
   "description": "Astro-based presentation engine for Sherp",
   "type": "module",
   "files": [
@@ -27,7 +27,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "publish:npm": "npm publish --access public --registry https://registry.npmjs.org",
+    "publish:github": "npm publish --registry https://npm.pkg.github.com",
+    "publish:all": "npm run publish:npm && npm run publish:github"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.10",

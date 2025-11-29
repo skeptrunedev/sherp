@@ -1,10 +1,10 @@
 {
-  "name": "@skeptrune/sherp-cli",
-  "version": "0.1.2",
+  "name": "@skeptrunedev/sherp-cli",
+  "version": "0.1.6",
   "description": "CLI tool for creating Marp-style presentations with Markdown/MDX",
   "type": "module",
   "bin": {
-    "sherp": "./dist/index.js"
+    "sherp": "dist/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,7 +15,10 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "publish:npm": "npm publish --access public --registry https://registry.npmjs.org",
+    "publish:github": "npm publish --registry https://npm.pkg.github.com",
+    "publish:all": "npm run publish:npm && npm run publish:github"
   },
   "keywords": [
     "presentation",
@@ -29,11 +32,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skeptrunedev/sherp.git",
+    "url": "git+https://github.com/skeptrunedev/sherp.git",
     "directory": "packages/cli"
   },
   "dependencies": {
-    "@skeptrune/sherp-astro": "*",
+    "@skeptrunedev/sherp-astro": "*",
     "chalk": "^5.6.2",
     "chokidar": "^4.0.3",
     "commander": "^14.0.2",
