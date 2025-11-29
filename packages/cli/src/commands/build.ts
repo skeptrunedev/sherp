@@ -65,6 +65,13 @@ export async function build(options: BuildOptions): Promise<void> {
     await mkdir(distDest, { recursive: true });
     await cp(distSource, distDest, { recursive: true });
 
+    // Copy images directory if it exists (for markdown image references)
+    const imagesSource = join(presentationDir, 'images');
+    if (existsSync(imagesSource)) {
+      const imagesDest = join(distDest, 'images');
+      await cp(imagesSource, imagesDest, { recursive: true });
+    }
+
     spinner.succeed(chalk.green('Build complete!'));
     console.log(chalk.cyan(`\n  Output: ${distDest}\n`));
   } catch (error) {
