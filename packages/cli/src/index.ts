@@ -5,6 +5,7 @@ import { init } from './commands/init.js';
 import { dev } from './commands/dev.js';
 import { build } from './commands/build.js';
 import { preview } from './commands/preview.js';
+import { exportPresentation } from './commands/export.js';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -42,5 +43,17 @@ program
   .description('Preview production build')
   .option('-p, --port <port>', 'Port to run on', '4322')
   .action(preview);
+
+program
+  .command('export [format]')
+  .description('Export presentation to PDF, PPTX, or images')
+  .option('-o, --output <file>', 'Output filename (or directory for images)')
+  .action((format, options) => {
+    if (format && format !== 'pdf' && format !== 'pptx' && format !== 'images') {
+      console.error(`Invalid format: ${format}. Use 'pdf', 'pptx', or 'images'.`);
+      process.exit(1);
+    }
+    exportPresentation({ format, output: options.output });
+  });
 
 program.parse();

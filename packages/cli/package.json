@@ -38,7 +38,8 @@
     "chokidar": "^4.0.3",
     "commander": "^14.0.2",
     "gray-matter": "^4.0.3",
-    "ora": "^9.0.0"
+    "ora": "^9.0.0",
+    "puppeteer": "^24.31.0"
   },
   "engines": {
     "node": ">=18.0.0"

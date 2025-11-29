@@ -9,6 +9,11 @@ export interface DevOptions {
 
 export interface BuildOptions {}
 
+export interface ExportOptions {
+  format?: 'pdf' | 'pptx' | 'images';
+  output?: string;
+}
+
 export interface PreviewOptions {
   port: string;
 }
